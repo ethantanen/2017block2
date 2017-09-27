@@ -1,0 +1,55 @@
+1)	Speedup is a measure of the difference in performance between two machines completing the same problem. Speedup is defined as the ratio between the runtime of machine 1 over the runtime for machine 2. Sp=T1/Tp
+
+2)	Efficiency measures the amount of time a processor is used. It is the ratio of speedup to the number of processors.  efficiency = T1/(P*Tp)
+
+3)
+
+a: 3
+b: 6 tasks * 5 sec/task = 30 sec
+c: T1=6, T2=4
+	speedup: T1/T2*5sec = 7.5sec
+	efficiency: 30/(20*2)= .75 —> 75% 
+d:T1=6, T4=3
+	speedup: T1/T4*5sec = 10sec
+	efficiency: 30/(15*4) = .5 —> 50%
+e:T1=6 T10=3
+	speedup: T1/T10*5sec = 10sec
+	efficiency:  30/(50*10) = .06  —> 6%
+f: 
+	T1=6p —> 30sec
+	-a 10x speed up would reduce the execution time down to 3 sec
+	T1/T? * 5sec = 3sec —-> 6p/T?*5sec = 3sec —> T? = 10p
+	-there would need to be 8 total parallel processors in the parallel region. 
+
+
+4)
+a: 	-latency = time it takes to satisfy transfer request = time it takes to get to memory + time it takes for memory to retrieve data + time it takes to get back to the processor
+
+	time it takes to get to memory: (.1 meters / c(m/s)) = 3.4 * 10^-10
+	time it takes for memory to retrieve data: 1tick/3Ghz = 3.4 * 10^-10
+
+	latency = 10 * 10^-10 seconds 
+
+
+	-# of clicks = latency/ghz (convenient bc constant ghz)
+clock ticks to travel to and from memory:
+	(.1 meters / c(m/s)) / 3Ghz=  1 tick
+
+	total ticks = 1 tick there + 1 tick to retrieve + 1 tick to return = 3ticks
+
+b: bandwidth amount of information per unit time
+
+3G tick/s
+128 bits wide = 16bytes wide 
+
+1 tick = 16bytes bussed 
+
+16bytes/tick * 3*10^9ticks/sec = 4.8 * 10^10
+
+
+
+
+
+
+
+			
