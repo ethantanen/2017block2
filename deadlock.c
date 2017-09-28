@@ -34,18 +34,18 @@ void proc_a() {
 void proc_b() {
     int x,y;
     // lock b so that the value won't change unexpectedly
-    omp_set_lock(&lockB);
+    omp_set_lock(&lockA);
     x = B;
     x = x/2;
     // lock a during modification
-    omp_set_lock(&lockA);
+    omp_set_lock(&lockB);
     y = A;
     y += x;
     A = y;
     // update B and release locks
     B = x;
-    omp_unset_lock(&lockA);
     omp_unset_lock(&lockB);
+    omp_unset_lock(&lockA);
 }
 
 int main(int argc, char** argv) {
