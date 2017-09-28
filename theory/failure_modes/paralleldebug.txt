@@ -1,0 +1,15 @@
+1)
+-A dead lock describes a scenario in which two tasks wait for each other and cannot continue until the other task returns their lock. An example of this in practice may happen when two parallel threads are locked and the threads cannot proceed until the other thread has unlocked their respective lock. This can be detected if there’s a deficit in print statements than that what should have been printed had the program run as predicted. To prevent this from occurring in a program a few solutions are avoiding the use of mutexes or holding at most a single lock at a time. 
+
+-The race condition describes a scenario in which two or more threads attempt to operate on a piece of memory without proper synchronicity. An example of this in practice may happen when two parallel threads require two print statements to execute in succession but due to parallelism the print statement will print in a nondeterministic fashion. This can be detected in code when two print statements in succession in the code do not print in succession on the console. Another example is if two parallel processes attempt to print ‘hello’ to the console at the same time it may come up as ‘hheelllloo’ or any number of other possibilities. 
+
+-Strangled scaling describes a scenario in which locks produce the illusion of parallelism when in fact the program is executing serially. An example of this in practice would be if in the code there is parallelism but each parallel process will execute serially due to the need to acquire a shared lock first. This can be detected by measuring the speed of your program and comparing it with the predicted speed. Often times strangled scaling can  cause a parallel program to perform worse than if the program were coded serially due to the overhead of communicating between threads. 
+
+2)
+-Load imbalance is when there is an uneven distribution of work between workers. If the load imbalance is known it is still possible to generate an accurate model of parallel performance. If the imbalance is known the critical path of the work-span model can be updated to reflect the imbalance. In order to limit the load imbalance, tool such as over-decomposition can be used where the work is divided into more tasks than there are workers. 
+
+3)
+-If there is a race condition then the program will print out a -1 rather than a threads id. -1 was the value that the thread id array was initialized with. If the line of code that reads “i++” executes in parallel with another thread than i may be incremented by 2 causing the value in the t_hello array to not be updated with the thread number. 
+
+4)
+-If there is a deadlock it will be manifested when the program is run when the stream of periods terminates. 
