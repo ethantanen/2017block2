@@ -31,6 +31,8 @@
 //for the exp func
 #include <math.h>
 #include <omp.h>
+
+omp_lock_t lockA;
 // valid pin characters
 const char* chars="0123456789";
 
@@ -69,6 +71,9 @@ void genpass(long passnum, char* passbuff) {
 }
 
 int main(int argc, char** argv) {
+    
+    omp_init_lock(&lockA);
+    
     if(argc != 2) {
         printf("Usage: %s <password hash>\n",argv[0]);
         return 1;
@@ -101,6 +106,8 @@ int main(int argc, char** argv) {
             notfound = test(argv[1],passmatch);
             
             if(notfound == 0){
+                omp_set_lock(&lockA);
+                
                 break;
             }
         }
