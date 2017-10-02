@@ -28,8 +28,6 @@
 // clock measurements
 #include <time.h>
 
-//for the exp func
-#include <math.h>
 #include <omp.h>
 
 omp_lock_t lockA;
