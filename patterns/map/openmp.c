@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
             notfound = test(argv[1],passmatch);
             
             if(notfound == 0){
-                return;
+                break;
             }
         }
         
