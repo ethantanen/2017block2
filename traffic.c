@@ -19,25 +19,25 @@ LinkedRecord *list_find(LinkedRecord *head, int year){
     //check to see if head is null
     //create first node in list
     
-    printf("HERE");
+    printf("hereq");
     
-    if(head == NULL){
+    if(head->year == 0){
         
-        printf("HEAD WAS NULL");
 
-        LinkedRecord *node;//= malloc(sizeof(LinkedRecord));
+        printf("nothere");
+       // LinkedRecord *node = malloc(sizeof(LinkedRecord));
         
-        node->year = year;
-        node->stops = 0;
-        node->next = NULL;
+        head->year = year;
+        head->stops = 0;
+        head->next = NULL;
+        
+        //head = &node;
         
         
         
-        
-        printf("also here:");
         
         //free(node);
-        return node;
+        return head;
     }
     
     if(head->year == year){
@@ -50,12 +50,10 @@ LinkedRecord *list_find(LinkedRecord *head, int year){
 
 int parse_line(char *line){
     
-    printf("just before free\n"); fflush(stdout);
 
     
     char *line_text = (char *)malloc(sizeof(char)*10);
     
-    printf("after issue:\n"); fflush(stdout);
     
     strncpy(line_text,line+6,4);
     
@@ -78,6 +76,7 @@ void print_list(LinkedRecord *head){
     
     
     if(head == NULL){
+        printf("EMPTY LIST");
         return;
     }
     
@@ -98,7 +97,7 @@ int main(int argc, char**argv){
     
     
     //created output list ptr
-    LinkedRecord *out_list;
+    LinkedRecord *out_list = malloc(sizeof(LinkedRecord));
     
     
     //create and open file
@@ -108,7 +107,7 @@ int main(int argc, char**argv){
 
     //toss the heaader line
     char *header_line = malloc(sizeof(char)*100);
-    fgets(header_line,INT_MAX,f);//large number to ensure newline char is hit before # of requested bytes
+    fgets(header_line,100,f);//large number to ensure newline char is hit before # of requested bytes
     free(header_line);
 
     
@@ -118,37 +117,32 @@ int main(int argc, char**argv){
     size_t len = 0;
     
     
-    printf("just bf node \n");
 
     
     
     LinkedRecord *node = malloc(sizeof(LinkedRecord));
     
-    printf("created node \n");
     
     while ((read = getline(&line, &len, f)) != -1) {
         
-        printf("here");
         
-        puts(line);
         
         int year = parse_line(line);
 
+        printf("hebery");
         
+        node = list_find(out_list,year);
         
-        printf("just before listfind, year: %d",year);
-        //node = list_find(out_list,year);
-        
-        //printf("past listfind");
-        //node->stops +=1;
+        node->stops +=1;
     
+        
         
     }
    
     
     fclose(f);
     
-    //print_list(out_list);
+    print_list(out_list);
     
     
     return 1;
