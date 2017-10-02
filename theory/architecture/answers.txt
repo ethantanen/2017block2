@@ -1,0 +1,29 @@
+1)
+
+-fscanf()is used to read formatted data from a file. The function takes two parameters:
+	-File *file - the input stream
+	-char *format - a string containing format criteria 
+
+
+-fread() is used to read data from a stream and puts the data in an array. The function takes four parameters:
+	-void *ptr - chunk of memory to hold read data
+	-size_t size - the size in bytes of each element to be read
+	-size_t nmemb - # of elements of size size
+	-FIlE *file - the input stream
+
+-fgets() is used to read a line of data from a stream and store it in memory. The function takes three parameters:
+	-char *r - ptr to location where line will be stored
+	-int n - the max. number of characters to be read (use length of r)
+	-File *file - the input stream
+	
+
+
+2)
+-If a variable is created on the stack, when the function returns the data instantiated from within the function will be erased. On the other hand, if the variable is created in the heap then the data will persist throughout the program. This can lead to trouble if unused data on the heap is not released because its very easy to quickly fill up the heap with unreachable data which will leave no memory for the rest of the program to execute. 
+
+3)
+-Modern languages are not loosing functionality by not having structs. Any program in a turing complete language can be translated into any other language. I think most programmers today would argue that with the advent of objects has increased functionality due to the fact that an objects data and functionality can be bundled up in one place. Also, by creating an object with no functionality, just data fields is nearly equivalent to a struct in c.
+
+4)
+-Yes, C can be used to implement a program using object-like logic. Object in OO-languages have constructors, fields and methods. Structs on the other hand simply have fields. Creating the illusion of constructors and methods is quite simple. Functions in C can use structs as parameters and return them as well. It would be simple to create a function that nearly parallels constructors. A function could take a set of data as parameters and return a struct populated with the appropriate data. Functions that act on object in other languages could be implemented using C by creating functions that accept structs as parameters and return some information based on operations done on the struct. 
+
