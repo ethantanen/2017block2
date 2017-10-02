@@ -79,8 +79,8 @@ int main(int argc, char** argv) {
         return 1;
     }
     
-    char passmatch[9]; // buffer for the matched password
-    long currpass=0; // current password under consideration
+    //char passmatch[9]; // buffer for the matched password
+    //long currpass=0; // current password under consideration
     
     // variables for the timer
     struct timespec start_time;
@@ -93,13 +93,14 @@ int main(int argc, char** argv) {
     
     int searchChunkSize = 12500000;
     
-    
+    char answer[9];
     
      #pragma omp parallel num_threads(8)
     {
         
         int thread_id = omp_get_thread_num();
         int i;
+        char passmatch[9]; // buffer for the matched password
         
         for(i=(searchChunkSize*thread_id)-searchChunkSize; i<(searchChunkSize*thread_id); i++){
             genpass(i,passmatch);
@@ -107,7 +108,10 @@ int main(int argc, char** argv) {
             
             if(notfound == 0){
                 omp_set_lock(&lockA);
+                
+                answer = passmatch;
                 printf("find1: %s",passmatch);
+                
                 break;
             }
         }
