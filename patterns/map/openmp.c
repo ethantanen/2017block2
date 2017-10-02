@@ -1,3 +1,4 @@
+
 //
 //  parallel.c
 //  
@@ -98,6 +99,10 @@ int main(int argc, char** argv) {
         for(i=(searchChunkSize*thread_id)-searchChunkSize; i<(searchChunkSize*thread_id); i++){
             genpass(i,passmatch);
             notfound = test(argv[1],passmatch);
+            
+            if(notfound == 0){
+                return;
+            }
         }
         
     }
