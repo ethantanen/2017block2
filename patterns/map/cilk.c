@@ -70,7 +70,7 @@ int main(int argc, char** argv) {
         return 1;
     }
     
-    char passmatch[9]; // buffer for the matched password
+     // buffer for the matched password
     long currpass=0; // current password under consideration
     
     // variables for the timer
@@ -87,6 +87,7 @@ int main(int argc, char** argv) {
     char answer[9];
     
     cilk_for(i=0; i< 100000000; i++){
+        char passmatch[9];
         // generate the password
         genpass(i,passmatch);
         // check for a match
