@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
             
             if(notfound == 0){
                 omp_set_lock(&lockA);
-                
+                printf("find1: %s",passmatch);
                 break;
             }
         }
