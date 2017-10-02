@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
     // convert the time to elapsed milliseconds
     msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
     
-    printf("found: %s in %dms\n",passmatch,msec);
+    printf("found: %s in %dms\n",answer,msec);
     return EXIT_SUCCESS;
 }
 
