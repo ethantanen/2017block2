@@ -27,6 +27,9 @@
 // clock measurements
 #include <time.h>
 
+//for the exp func
+#include <math.h>
+
 // valid pin characters
 const char* chars="0123456789";
 
@@ -82,13 +85,19 @@ int main(int argc, char** argv) {
     // While a match has not been found, search
     int notfound=1;
     
+    int searchChunkSize = 12500000;
+    
+    
+    
      #pragma omp parallel num_threads(8)
     {
         
-        while(notfound){
-            genpass(currpass,passmatch);
+        int thread_id = omp_get_thread_num();
+        int i;
+        
+        for(i=(searchChunkSize*thread_id)-searchChunkSize; i<(searchChunkSize*thread_id); i++){
+            genpass(i,passmatch);
             notfound = test(argv[1],passmatch);
-            curpass++;
         }
         
     }
