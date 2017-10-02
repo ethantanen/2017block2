@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     
     int searchChunkSize = 12500000;
     
-    char answer[9];
+    char *answer;
     
      #pragma omp parallel num_threads(8)
     {
@@ -107,7 +107,6 @@ int main(int argc, char** argv) {
             notfound = test(argv[1],passmatch);
             
             if(notfound == 0){
-                omp_set_lock(&lockA);
                 
                 answer = passmatch;
                 printf("find1: %s",passmatch);
