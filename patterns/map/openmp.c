@@ -109,7 +109,6 @@ int main(int argc, char** argv) {
             if(notfound == 0){
                 
                 answer = passmatch;
-                printf("find1: %s",passmatch);
                 
                 break;
             }
