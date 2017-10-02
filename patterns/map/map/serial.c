@@ -17,6 +17,9 @@
 // clock measurements
 #include <time.h>
 
+
+#include <omp.h>
+
 // valid pin characters
 const char* chars="0123456789";
 
@@ -71,13 +74,20 @@ int main(int argc, char** argv) {
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     // While a match has not been found, search
     int notfound=1;
-    while(notfound) {
-        // generate the password
-        genpass(currpass,passmatch);
-        // check for a match
-        notfound=test(argv[1], passmatch);
-        currpass++;
+    
+    int currpass = 0;
+    #pragma omp parallel num_threads(8)
+    {
+        if(notfound) {
+            // generate the password
+            genpass(currpass,passmatch);
+            // check for a match
+            notfound=test(argv[1], passmatch);
+            currpass++;
+        }
     }
+    
+    
     clock_gettime(CLOCK_MONOTONIC,&end_time);
 
     // convert the time to elapsed milliseconds
