@@ -31,6 +31,9 @@ struct volume {
 
 // Add phaseball to a volume
 void volume_append(struct volume* v, struct phaseball* o) {
+    
+    printf("last: %f, size: %f",v->last,v->size);
+    
     if( v->last == v->size ) {
       
         
