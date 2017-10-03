@@ -104,23 +104,26 @@ void post_process(struct volume* v, float* cx, float* cy) {
     double wy=0.0;
     
     
-    //int searchChunkSize =
+    int searchChunkSize =v->last/8;
+    int sum;
     
-    //#pragma omp parallel num_threads[8];
-    //{
+    #pragma omp parallel num_threads[8] for reduction(+:sum);
+    {
         
         int thread_id = omp_get_thread_num();
     
-    for(int i=0; i<v->last; i++) {
+        for(int i=(searchChunkSize*thread_id)-searchChunkSize; i<(searchChunkSize*thread_id); i++) {
+            
+            sum++;
         
+            mass_sum += v->mass[i];
+            wx += (v->x)[i] * v->mass[i];
+            wy += (v->y)[i] * v->mass[i];
+        }
         
+        printf("%d",sum);
         
-        mass_sum += v->mass[i];
-        wx += (v->x)[i] * v->mass[i];
-        wy += (v->y)[i] * v->mass[i];
     }
-        
-    //}
     *cx = wx/mass_sum;
     *cy = wy/mass_sum;
     
