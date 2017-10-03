@@ -49,7 +49,7 @@ void volume_append(struct volume* v, struct phaseball* o) {
     (v->y)[v->last] = o->y;
     (v->mass)[v->last] = o->mass;
    
-
+    free(o);
     
     //(v->objects)[(v->last)] = o;
     (v->last) += 1;
