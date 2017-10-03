@@ -15,46 +15,24 @@ struct phaseball {
     float mass;
 };
 
-
-//space in which phaseballs are heald
 struct volume {
     size_t size;
     size_t last;
     
-    //defined through new arrays, now the volume has no notion of a phaseball struct
-    float *x;
-    float *y;
-    float *mass;
     
     
+    
+    struct phaseball** objects;
 };
 
 // Add phaseball to a volume
 void volume_append(struct volume* v, struct phaseball* o) {
-    
-    
-    
     if( v->last == v->size ) {
         (v->size) += 100;
-        
-        //increase size of the thre arrays in the volume struct
-        v->x = realloc(v->x,sizeof(float)*(v->size+100));
-        v->y = realloc(v->y,sizeof(float)*(v->size+100));
-        v->y = realloc(v->mass, sizeof(float)*(v->size+100));
-        
-        
-
+        v->objects = realloc(v->objects, sizeof(struct phaseball*)*(v->size)+100);
     }
-    
-    //updated the last entry w/ new data
-    (v->x)[(v->last)] = (o->x);
-    (v->y)[(v->last)] = (o->y);
-    (v->mass)[(v->last)] = (o->mass);
-    
-    
-    
+    (v->objects)[(v->last)] = o;
     (v->last) += 1;
-    
     return;
 }
         
@@ -75,29 +53,17 @@ void place_uniformly(int sx, int ex, int sy, int ey, int sz, int ez, struct volu
     }
 }
 
-
-
-///create three reduction variables to store mass, x and y
-///append function will just keep trakc of x y and mass
-
 // Projects 3D volume to 11x11 2D map and report centroid
 void post_process(struct volume* v, float* cx, float* cy) {
     double mass_sum=0.0;
     double wx=0.0;
     double wy=0.0;
-    
     for(int i=0; i<v->last; i++) {
-        
-        
-        mass_sum += v->mass[i];
-        wx += (v->x[i]) * (v->mass[i]);
-        wy += (v->y[i]) * (v->mass[i]);
-        
-        
+        struct phaseball* o = v->objects[i];
+        mass_sum += o->mass;
+        wx += o->x * o->mass;
+        wy += o->y * o->mass;
     }
-    
-    printf("mass_sum: %f, wx: %f, wy: %f", mass_sum,wx,wy);
-    
     *cx = wx/mass_sum;
     *cy = wy/mass_sum;
     
@@ -109,12 +75,7 @@ int main(int argc, char** argv) {
     struct volume v;
     v.size=100;
     v.last=0;
-    
-    
-    v.x = malloc(sizeof(float)*100);
-    v.y = malloc(sizeof(float)*100);
-    v.mass = malloc(sizeof(float)*100);
-    
+    v.objects = malloc(sizeof(struct phaseball*)*100);
 
     // Set the initial configuration
     place_uniformly(-1000,1000,-100,100,-100,100,&v);
@@ -124,9 +85,6 @@ int main(int argc, char** argv) {
     struct timespec start_time;
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC,&start_time);
-    
-    
-    //where processing begins, takes ptrs to volume, x coord and y coord
     post_process(&v, &cx, &cy);
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
