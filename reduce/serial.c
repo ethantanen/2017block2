@@ -18,10 +18,6 @@ struct phaseball {
 struct volume {
     size_t size;
     size_t last;
-    
-    
-    
-    
     struct phaseball** objects;
 };
 
