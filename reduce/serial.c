@@ -109,7 +109,12 @@ int main(int argc, char** argv) {
     struct volume v;
     v.size=100;
     v.last=0;
-    v.objects = malloc(sizeof(struct phaseball*)*100);
+    
+    
+    v.x = malloc(sizeof(float)*100);
+    v.y = malloc(sizeof(float)*100);
+    v.mass = malloc(sizeof(float)*100);
+    
 
     // Set the initial configuration
     place_uniformly(-1000,1000,-100,100,-100,100,&v);
