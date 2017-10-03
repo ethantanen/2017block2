@@ -12,31 +12,22 @@
 #include "traffic.h"
 
 
-//TODO: check syntax
 
 LinkedRecord *list_find(LinkedRecord *head, int year){
     
-    //check to see if head is null
-    //create first node in list
     
-    printf("hereq");
+    
     
     if(head->year == 0){
         
-
-        printf("nothere");
-       // LinkedRecord *node = malloc(sizeof(LinkedRecord));
-        
         head->year = year;
         head->stops = 0;
-        head->next = NULL;
         
-        //head = &node;
+        head->next = malloc(sizeof(LinkedRecord));
+        head->next->year = 0;
+        head->next->stops= 0;
+        head->next->next = 0;
         
-        
-        
-        
-        //free(node);
         return head;
     }
     
@@ -50,7 +41,6 @@ LinkedRecord *list_find(LinkedRecord *head, int year){
 
 int parse_line(char *line){
     
-
     
     char *line_text = (char *)malloc(sizeof(char)*10);
     
@@ -76,11 +66,10 @@ void print_list(LinkedRecord *head){
     
     
     if(head == NULL){
-        printf("EMPTY LIST");
         return;
     }
     
-    printf("%d had %d stops",head->year,head->stops);
+    printf("%d had %d stops \n",head->year,head->stops);
     
     print_list(head->next);
 }
@@ -103,12 +92,6 @@ int main(int argc, char**argv){
     //create and open file
     FILE *f;
     f = fopen(argv[1],"r");
-    
-
-    //toss the heaader line
-    char *header_line = malloc(sizeof(char)*100);
-    fgets(header_line,100,f);//large number to ensure newline char is hit before # of requested bytes
-    free(header_line);
 
     
     
@@ -117,7 +100,7 @@ int main(int argc, char**argv){
     size_t len = 0;
     
     
-
+    getline(&line, &len, f);//move through header
     
     
     LinkedRecord *node = malloc(sizeof(LinkedRecord));
@@ -129,7 +112,6 @@ int main(int argc, char**argv){
         
         int year = parse_line(line);
 
-        printf("hebery");
         
         node = list_find(out_list,year);
         
