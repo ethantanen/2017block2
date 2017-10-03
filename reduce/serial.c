@@ -16,18 +16,42 @@ struct phaseball {
 };
 
 struct volume {
+    
+    
     size_t size;
     size_t last;
-    struct phaseball** objects;
+    
+    float *x;
+    float *y;
+    float *mass;
+    
+    
+    //struct phaseball** objects;
 };
 
 // Add phaseball to a volume
 void volume_append(struct volume* v, struct phaseball* o) {
     if( v->last == v->size ) {
+      
+        
         (v->size) += 100;
-        v->objects = realloc(v->objects, sizeof(struct phaseball*)*(v->size)+100);
+        
+        v->x = realloc(v->x,sizeof(float)*size);
+        v->y = realloc(v->y, sizeof(float)*size);
+        v->mass = realloc(v->mass,sizeof(float)*size);
+        
+        
+       // v->objects = realloc(v->objects, sizeof(struct phaseball*)*(v->size)+100);
     }
-    (v->objects)[(v->last)] = o;
+    
+    
+    (v->x)[v->last] = o->x;
+    (v->y)[v->last] = o->y;
+    (v->z)[v->last] = o->mass;
+   
+
+    
+    //(v->objects)[(v->last)] = o;
     (v->last) += 1;
     return;
 }
@@ -71,7 +95,10 @@ int main(int argc, char** argv) {
     struct volume v;
     v.size=100;
     v.last=0;
-    v.objects = malloc(sizeof(struct phaseball*)*100);
+   
+    v.x = malloc(sizeof(float)*50);
+    v.y = malloc(sizeof(float)*50);
+    v.mass = malloc(sizeof(float)*50);
 
     // Set the initial configuration
     place_uniformly(-1000,1000,-100,100,-100,100,&v);
