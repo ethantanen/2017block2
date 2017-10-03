@@ -49,7 +49,7 @@ void volume_append(struct volume* v, struct phaseball* o) {
     (v->y)[v->last] = o->y;
     (v->mass)[v->last] = o->mass;
    
-    free(o);
+   
     
     //(v->objects)[(v->last)] = o;
     (v->last) += 1;
@@ -68,6 +68,7 @@ void place_uniformly(int sx, int ex, int sy, int ey, int sz, int ez, struct volu
                 n->mass = 1;
                 n->mass = fabs(n->x)+fabs(n->y)+fabs(n->z);
                 volume_append(v,n);
+                free(phaseball);
             }
         }
     }
