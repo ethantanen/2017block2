@@ -36,9 +36,9 @@ void volume_append(struct volume* v, struct phaseball* o) {
         
         (v->size) += 100;
         
-        v->x = realloc(v->x,sizeof(float)*(v->size));
-        v->y = realloc(v->y, sizeof(float)*(v->size));
-        v->mass = realloc(v->mass,sizeof(float)*(v->size));
+        v->x = realloc(v->x,sizeof(float)*(v->size+100));
+        v->y = realloc(v->y, sizeof(float)*(v->size+100));
+        v->mass = realloc(v->mass,sizeof(float)*(v->size+100));
         
         
        // v->objects = realloc(v->objects, sizeof(struct phaseball*)*(v->size)+100);
