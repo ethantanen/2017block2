@@ -21,7 +21,7 @@ struct volume {
     size_t size;
     size_t last;
     
-    //defined through new arrays, now the volume has no notion of a phaseball struct
+    //defined three new arrays, now the volume has no notion of a phaseball struct
     float *x;
     float *y;
     float *mass;
@@ -114,7 +114,8 @@ int main(int argc, char** argv) {
     v.x = malloc(sizeof(float)*100);
     v.y = malloc(sizeof(float)*100);
     v.mass = malloc(sizeof(float)*100);
-    
+	
+     printf("\n here \n");    
 
     // Set the initial configuration
     place_uniformly(-1000,1000,-100,100,-100,100,&v);
