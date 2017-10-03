@@ -36,9 +36,9 @@ void volume_append(struct volume* v, struct phaseball* o) {
         
         (v->size) += 100;
         
-        v->x = realloc(v->x,sizeof(float)*size);
-        v->y = realloc(v->y, sizeof(float)*size);
-        v->mass = realloc(v->mass,sizeof(float)*size);
+        v->x = realloc(v->x,sizeof(float)*(v->size));
+        v->y = realloc(v->y, sizeof(float)*(v->size));
+        v->mass = realloc(v->mass,sizeof(float)*(v->size));
         
         
        // v->objects = realloc(v->objects, sizeof(struct phaseball*)*(v->size)+100);
@@ -47,7 +47,7 @@ void volume_append(struct volume* v, struct phaseball* o) {
     
     (v->x)[v->last] = o->x;
     (v->y)[v->last] = o->y;
-    (v->z)[v->last] = o->mass;
+    (v->mass)[v->last] = o->mass;
    
 
     
@@ -79,10 +79,12 @@ void post_process(struct volume* v, float* cx, float* cy) {
     double wx=0.0;
     double wy=0.0;
     for(int i=0; i<v->last; i++) {
-        struct phaseball* o = v->objects[i];
-        mass_sum += o->mass;
-        wx += o->x * o->mass;
-        wy += o->y * o->mass;
+        
+        
+        
+        mass_sum += v->mass[i];
+        wx += (v->x)[i] * v->mass[i];
+        wy += (v->y)[i] * v->mass[i];
     }
     *cx = wx/mass_sum;
     *cy = wy/mass_sum;
