@@ -32,10 +32,11 @@ struct volume {
 // Add phaseball to a volume
 void volume_append(struct volume* v, struct phaseball* o) {
     
-    printf("last: %f, size: %f",v->last,v->size);
+//    printf("last: %zu, size: %zu\n",v->last,v->size);
     
     if( v->last == v->size ) {
-      
+
+///	printf("Here");      
         
         (v->size) += 100;
         
@@ -70,8 +71,9 @@ void place_uniformly(int sx, int ex, int sy, int ey, int sz, int ez, struct volu
                 n->z = k;
                 n->mass = 1;
                 n->mass = fabs(n->x)+fabs(n->y)+fabs(n->z);
+		//printf("v: %zu",v->size);
                 volume_append(v,n);
-                free(phaseball);
+                free(n);
             }
         }
     }
@@ -101,10 +103,12 @@ int main(int argc, char** argv) {
     struct volume v;
     v.size=100;
     v.last=0;
-   
-    v.x = malloc(sizeof(float)*50);
-    v.y = malloc(sizeof(float)*50);
-    v.mass = malloc(sizeof(float)*50);
+ 	
+	printf("vszie: %zu \n",v.size);
+  
+    v.x = malloc(sizeof(float)*100);
+    v.y = malloc(sizeof(float)*100);
+    v.mass = malloc(sizeof(float)*100);
 
     // Set the initial configuration
     place_uniformly(-1000,1000,-100,100,-100,100,&v);
