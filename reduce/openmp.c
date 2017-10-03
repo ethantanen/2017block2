@@ -107,7 +107,7 @@ void post_process(struct volume* v, float* cx, float* cy) {
     int searchChunkSize =v->last/8;
     int sum;
     
-    #pragma omp parallel num_threads[8] for reduction(+:sum);
+    #pragma omp parallel num_threads(8) reduction(+:sum)
     {
         
         int thread_id = omp_get_thread_num();
