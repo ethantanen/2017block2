@@ -90,6 +90,9 @@ void place_uniformly(int sx, int ex, int sy, int ey, int sz, int ez, struct volu
 // Projects 3D volume to 11x11 2D map and report centroid
 void post_process(struct volume* v, float* cx, float* cy) {
     
+    
+    
+    /*
     double mass_sum=0.0;
     double wx=0.0;
     double wy=0.0;
@@ -114,6 +117,21 @@ void post_process(struct volume* v, float* cx, float* cy) {
     
     *cx = wx/mass_sum;
     *cy = wy/mass_sum;
+    */
+    
+    CILK_C_REDUCER_OPADD(sum, int, 0);
+    CILK_C_REGISTER_REDUCER(sum);
+    
+    cilk_for(int i=0; i<10; i++){
+        sum+= i;
+    }
+    
+    printf("sum: %d",sum.value);
+    
+    
+    
+    
+    
     
     return;
 }
