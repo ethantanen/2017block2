@@ -37,14 +37,17 @@ struct volume {
     float *mass;
     
     
+    //struct phaseball** objects;
 };
 
 // Add phaseball to a volume
 void volume_append(struct volume* v, struct phaseball* o) {
     
+    //    printf("last: %zu, size: %zu\n",v->last,v->size);
     
     if( v->last == v->size ) {
         
+        ///	printf("Here");
         
         (v->size) += 100;
         
@@ -53,6 +56,7 @@ void volume_append(struct volume* v, struct phaseball* o) {
         v->mass = realloc(v->mass,sizeof(float)*(v->size+100));
         
         
+        // v->objects = realloc(v->objects, sizeof(struct phaseball*)*(v->size)+100);
     }
     
     
@@ -62,6 +66,7 @@ void volume_append(struct volume* v, struct phaseball* o) {
     
     
     
+    //(v->objects)[(v->last)] = o;
     (v->last) += 1;
     return;
 }
@@ -80,6 +85,8 @@ void place_uniformly(int sx, int ex, int sy, int ey, int sz, int ez, struct volu
                 n->z = k;
                 n->mass = 1;
                 n->mass = fabs(n->x)+fabs(n->y)+fabs(n->z);
+                //printf("v: %zu",v->size);
+                count++;
                 volume_append(v,n);
                 free(n);
                 
@@ -87,36 +94,42 @@ void place_uniformly(int sx, int ex, int sy, int ey, int sz, int ez, struct volu
         }
     }
     
+    printf("THE COUNT: %d",count);
 }
 
 // Projects 3D volume to 11x11 2D map and report centroid
 void post_process(struct volume* v, float* cx, float* cy) {
-    
     double mass_sum=0.0;
     double wx=0.0;
     double wy=0.0;
     
     
     int searchChunkSize =v->last/8;
-    
+//     printf("searchchuncksize: %d",searchChunkSize);
+  // fflush(stdout);
+/* 	 int sum=0;
     omp_set_num_threads(8);
     #pragma omp parallel reduction(+:sum,mass_sum,wx,wy)
     {
         
         int thread_id = omp_get_thread_num();
     
-        for(int i=(searchChunkSize*(thread_id+1))-searchChunkSize; i<(searchChunkSize*(thread_id+1)); i++) {
+        for(int i=(searchChunkSize*thread_id)-searchChunkSize; i<(searchChunkSize*thread_id); i++) {
        		 
             mass_sum += v->mass[i];
             wx += (v->x)[i] * v->mass[i];
             wy += (v->y)[i] * v->mass[i];
+	sum++;
         }
-    }
- 
+}        
+  */
+printf("last: %f",v->last);     
+        
     
-    
-    *cx = wx/mass_sum;
-    *cy = wy/mass_sum;
+printf("SUM: %d\n",sum);
+fflush(stdout);
+   // *cx = wx/mass_sum;
+   // *cy = wy/mass_sum;
     
     return;
 }
@@ -126,7 +139,9 @@ int main(int argc, char** argv) {
     struct volume v;
     v.size=100;
     v.last=0;
-        
+    
+    printf("vszie: %zu \n",v.size);
+    
     v.x = malloc(sizeof(float)*100);
     v.y = malloc(sizeof(float)*100);
     v.mass = malloc(sizeof(float)*100);
