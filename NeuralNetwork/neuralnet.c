@@ -138,7 +138,7 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
     
     for(int i=0; i<in*hid; i++){
         double val = (double)rand()/(double)RAND_MAX;
-        if(val>.5){
+        if(val > .5){
             val += -.5;
         }
         net->in_hid[i] = val;
