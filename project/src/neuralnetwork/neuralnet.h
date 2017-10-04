@@ -13,7 +13,7 @@
 
 
 typedef struct Node{
-    
+    double activation;
     double output;
     
 }Node;
@@ -25,9 +25,9 @@ typedef struct NeuralNet{
     int numHid;
     int numOut;
     
-    struct Node **inputLayer;
-    struct Node **hiddenLayer;
-    struct Node **outputLayer;
+    struct Node *inputLayer;
+    struct Node *hiddenLayer;
+    struct Node *outputLayer;
     
     double  *in_hid;
     double  *hid_out;
