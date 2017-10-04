@@ -6,7 +6,6 @@
 //
 //
 
-#include "openmp.h"
 
 /**
  * Program to scale and project data into 2D and find a centroid
@@ -100,7 +99,7 @@ void post_process(struct volume* v, float* cx, float* cy) {
     int searchChunkSize =v->last/8;
     
     omp_set_num_threads(8);
-    #pragma omp parallel reduction(+:sum,mass_sum,wx,wy)
+    #pragma omp parallel reduction(+:mass_sum,wx,wy)
     {
         
         int thread_id = omp_get_thread_num();
