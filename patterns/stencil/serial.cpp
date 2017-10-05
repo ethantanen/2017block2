@@ -62,12 +62,13 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     
     
     //Calculate intensities
-    for(int x=0; x<rows; x++){
-        for(int y=0; y<cols; y++){
-            int offset = (x*rows)+cols;
+    for(int i=0; i<rows; i++){
+        for(int j=0; j<cols; j++){
+            int offset = i + (j*rows);
+            
+            
             pixel pix = in[offset];
             intensity[offset]= (pix.red+pix.green+pix.blue)/3;
-	printf("intensity[%d] = %f\n",offset,intensity[offset]);
         }
     }
     
@@ -85,33 +86,28 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     double Yedges[cols*rows];
     
     
-    //cycle thorugh image
-    for(int i=0; i<rows; i++){
-        for(int j=0; j<cols; j++){
-            int out_offset = j + (i*rows);
+    for(int i = 0; i < rows; ++i) {
+        for(int j = 0; j < cols; ++j) {
             
-            //centered pixel
-           // int out_offset = i + (j*rows);
+            const int out_offset = i + (j*rows);
+            
             // ...apply the template centered on the pixel...
-            //look at -1 -> +1 around pixel both in x and y direction
             for(int x = i - 1, kx = 0; x <= i + 1; ++x, ++kx) {
                 for(int y = j - 1, ky = 0; y <= j + 1; ++y, ++ky) {
                     // ...and skip parts of the template outside of the image
                     if(x >= 0 && x < rows && y >= 0 && y < cols) {
                         // Acculate intensities in the output pixel
-                        const int in_offset = 
-                        const int k_offset = 
-			
-			printf("wittx[%d] = %f\n",k_offset,wittX[k_offset]);
-			printf("intensity[%d] = %f\n",in_offset, intensity[in_offset]);                        
-                        Xedges[out_offset] += wittX[k_offset] * intensity[in_offset];
-                        Yedges[out_offset] += wittY[k_offset] * intensity[in_offset];
-                        printf("kedges[%d] = %f\n",Xedges[out_offset]);
+                        const int in_offset = x + (y*rows);
+                        const int k_offset = kx + (ky*3);
+                        Xedges[out_offset] += prewittX_kernel[k_offset] * intensity[in_offset];
+                        Yedges[out_offset] += prewittY_kernel[k_offset] * intensity[in_offset];
                     }
                 }
             }
         }
     }
+
+    
     
     double out_intensity[cols*rows];
     
