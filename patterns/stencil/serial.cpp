@@ -56,6 +56,86 @@ void prewittY_kernel(const int rows, const int cols, double * const kernel) {
         }
 }
 
+void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
+    
+    double intensity[rows*cols];
+    
+    
+    //Calculate intensities
+    for(int x=0; x<cols; x++){
+        for(int y=0; y<rows; y++){
+            int offset = (x*cols)+y;
+            pixel pix = in[offset];
+            intensity[offset]= (pix.red+pix.green+pix.blue)/3;
+        }
+    }
+    
+    
+    /*
+     arrays to hold stencils and edge values
+     */
+    double wittX[9];
+    double wittY[9];
+    
+    prewittX_kernel(3,3,wittX);
+    prewittY_kernel(3,3,wittY);
+    
+    double Xedges[cols*rows];
+    double Yedges[cols*rows];
+    
+    
+    //cycle thorugh image
+    for(int i=0; i<rows; i++){
+        for(int j=0; j<cols; j++){
+            int out_offset = i + (j*rows);
+            
+            //centered pixel
+            int out_offset = i + (j*rows);
+            // ...apply the template centered on the pixel...
+            //look at -1 -> +1 around pixel both in x and y direction
+            for(int x = i - 1, kx = 0; x <= i + 1; ++x, ++kx) {
+                for(int y = j - 1, ky = 0; y <= j + 1; ++y, ++ky) {
+                    // ...and skip parts of the template outside of the image
+                    if(x >= 0 && x < rows && y >= 0 && y < cols) {
+                        // Acculate intensities in the output pixel
+                        const int in_offset = x + (y*rows);
+                        const int k_offset = kx + (ky*3);
+                        
+                        Xedges[out_offset] += wittX[k_offset] * intensity[in_offset];
+                        Yedges[out_offset] += wittY[k_offset] * intensity[in_offset];
+                        
+                    }
+                }
+            }
+        }
+    }
+    
+    double out_intensity[cols*rows];
+    
+    for(int i=0; i<rows; i++){
+        for(int j=0; j<cols; j++){
+            int offset = i + (j*rows);
+            out_intensity[offset] = sqrt((Xedges[offset]*Xedges[offset])+(Yedges[offset]*Yedges[offset]));
+        }
+    }
+    
+    for(int i=0; i<rows; i++){
+        for(int j=0; j<cols; j++){
+            
+            int offset = i + (j*rows);
+            
+            double intensity = out_intensity[offset];
+            
+            out[i].red = intensity;
+            out[i].green = intensity;
+            out[i].blue = intensity;
+            
+        }
+    }
+    
+}
+
+
 /*
  * The gaussian kernel provides a stencil for blurring images based on a 
  * normal distribution
