@@ -56,7 +56,7 @@ void prewittY_kernel(const int rows, const int cols, double * const kernel) {
         }
 }
 
-void apply_prewitt(cont int rows, const int cols, pixel *in, pixel *out){
+void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     
     double intensity[rows*cols];
     
