@@ -87,7 +87,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     //cycle thorugh image
     for(int i=0; i<rows; i++){
         for(int j=0; j<cols; j++){
-            int out_offset = i + (j*rows);
+            int out_offset = j + (i*rows);
             
             //centered pixel
            // int out_offset = i + (j*rows);
