@@ -62,9 +62,9 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     
     
     //Calculate intensities
-    for(int x=0; x<cols; x++){
-        for(int y=0; y<rows; y++){
-            int offset = (x*cols)+y;
+    for(int x=0; x<rows; x++){
+        for(int y=0; y<cols; y++){
+            int offset = (x*rows)+cols;
             pixel pix = in[offset];
             intensity[offset]= (pix.red+pix.green+pix.blue)/3;
         }
@@ -125,7 +125,10 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             int offset = i + (j*rows);
             
             double intensity = out_intensity[offset];
-            
+   
+
+            printf("intensity[%d] = %f\n",offset,intensity);
+         
             out[i].red = intensity;
             out[i].green = intensity;
             out[i].blue = intensity;
