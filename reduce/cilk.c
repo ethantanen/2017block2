@@ -1,5 +1,5 @@
 //
-//  openmp.c
+//  cilk.c
 //  
 //
 //  Created by Ethan Tanen on 10/3/17.
@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <cilk/reducer_opadd.h>
 #include <cilk/cilk.h>
 /* struct to hold objects attributes */
 struct phaseball {
@@ -92,42 +93,37 @@ void post_process(struct volume* v, float* cx, float* cy) {
     
     
     
-    /*
-    double mass_sum=0.0;
-    double wx=0.0;
-    double wy=0.0;
+    
+
+CILK_C_REDUCER_OPADD(mass_sum,float,0);
+CILK_C_REDUCER_OPADD(wx,float,0);
+CILK_C_REDUCER_OPADD(wy,float,0);
+
+CILK_C_REGISTER_REDUCER(mass_sum);
+CILK_C_REGISTER_REDUCER(wx);
+CILK_C_REGISTER_REDUCER(wy);
+
+
     
     
-    
-   
-        
-        cilk::reducer< cilk::op_add<int> > mass_sum,wx,wy;
-    
-    
-    
-        cilk_for(int i=(searchChunkSize*(thread_id+1))-searchChunkSize; i<(searchChunkSize*(thread_id+1)); i++) {
+	printf("vlast: %zu",v->last);
+	fflush(stdout);    
+      
+        cilk_for(int i=0; i<v->last; i++) {
        		 
-            mass_sum += v->mass[i];
-            wx += (v->x)[i] * v->mass[i];
-            wy += (v->y)[i] * v->mass[i];
+           REDUCER_VIEW(mass_sum) += v->mass[i];
+           REDUCER_VIEW(wx) += (v->x)[i] * v->mass[i];
+           REDUCER_VIEW(wy) += (v->y)[i] * v->mass[i];
         }
     
  
+printf("ms: %f, wx: %f, wy: %f",mass_sum.value,wx.value,wy.value);    
+    
+    *cx = wx.value/mass_sum.value;
+    *cy = wy.value/mass_sum.value;
     
     
-    *cx = wx/mass_sum;
-    *cy = wy/mass_sum;
-    */
-    
-    CILK_C_REDUCER_OPADD(sum, int, 0);
-    CILK_C_REGISTER_REDUCER(sum);
-    
-    cilk_for(int i=0; i<10; i++){
-        sum+= i;
-    }
-    
-    printf("sum: %d",sum.value);
-    
+   
     
     
     
@@ -162,5 +158,7 @@ int main(int argc, char** argv) {
     printf("Centroid at: %f,%f\n",cx,cy);
     printf("found in %dms\n",msec);
     
-    return EXIT_SUCCESS;
+    return 1;
+
+
 }

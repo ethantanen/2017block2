@@ -96,9 +96,9 @@ void post_process(struct volume* v, float* cx, float* cy) {
     double wy=0.0;
     
     
-    int searchChunkSize =v->last/8;
+    int searchChunkSize =v->last/3;
     
-    omp_set_num_threads(8);
+    omp_set_num_threads(3);
     #pragma omp parallel reduction(+:mass_sum,wx,wy)
     {
         
