@@ -112,6 +112,8 @@ void apply_stencil_prewitt( const int rows, const int cols, pixel *const in, pix
     }
     
     
+    for(
+    
     
     //calculate output intensities
     double outIntensity[rows*cols];
@@ -266,7 +268,7 @@ int main( int argc, char* argv[] ) {
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     apply_stencil(3, 32.0, rows, cols, imagePixels, outPixelsTwo);
-    apply_stencil_prewitt(3,3,outPixelsTwo,outPixels);
+    apply_stencil_prewitt(rows,cols,outPixelsTwo,outPixels);
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
     printf("Stencil application took %dms\n",msec);
