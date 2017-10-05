@@ -99,8 +99,8 @@ void apply_stencil_prewitt( const int rows, const int cols, pixel *const in, pix
             for(int kx=0, x=index-1; kx<3; kx++,x++){
                 for(int ky=0, y=index-1; ky<3; ky++,y++){
                     
-                    int k_offset = (kx*i)+ky;
-                    int in_offset = (x*i)+y;
+                    int k_offset = (kx*3)+ky;
+                    int in_offset = (x*rows)+y;
                     
                     
                     bluredX[index] += intensities[k_offset] * prewittx[k_offset];
@@ -112,7 +112,6 @@ void apply_stencil_prewitt( const int rows, const int cols, pixel *const in, pix
     }
     
     
-    for(
     
     
     //calculate output intensities
