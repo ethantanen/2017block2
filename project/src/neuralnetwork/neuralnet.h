@@ -13,8 +13,13 @@
 
 
 typedef struct Node{
+    
     double activation;
     double output;
+    
+    double sigPrime;
+    
+    double littleDelta;
     
 }Node;
 
@@ -32,6 +37,7 @@ typedef struct NeuralNet{
     double  *in_hid;
     double  *hid_out;
     
+    //totWIH  -> total Weights from Input to Hidden
     int totalNumNeurons;
     int totWIH;
     int totWHO;
@@ -40,39 +46,46 @@ typedef struct NeuralNet{
 }NeuralNet;
 
 
-
-
-
-
-
-
-
-double dotProduct(double *vector1, double *vector2,int vector_size);
-double sigmoid(double activation);
-
-/*calculates error signal for output layer by calling a 
- series of other functions
  
- delta error = error * weights_coming_in * learning rate
- */
-double *errorOL(double target[], double output[]);
-
-double *deltaO(double target[], double output[]);
-double *sigmoidDeriv(double output);
-
 /*
- error of hidden layer is a function of the weights leaving it, the weighted error of the weights leaving it,
- lpo = layer plus one
+ Initiates a neural net with random weights between 0 and .5
  */
-double *errorHL(double weightsLPO[], double outputs[], double errorLPO[]);
-double *errorSignalOutput(double *output, double *target, double *deltaE, int output_size);
-double *deltaWeights(double learning_rate, double *prev_layer_activatons, double *error_signals, int prev_layer_size, double *delta_errors);
 void net_init(int in, int hid, int out, struct NeuralNet *net);
 
+/*
+ These function are called to implement the forward portion of the net
+    -sigmoid is needed to calcualte the output of the node
+    -sigPrime is a value needed for back propagation but it too is calculated now
+ */
 void fastforward(NeuralNet *net, double *in);
+double sigmoid(double activation);
+double sigPrime(double activation);
 
+/*
+ function related to backpropagating
+ */
+
+
+//TODO: need calculate little delta and large delta functons
+void calculateLittleDeltas(NeuralNet *net);
+void calculateBigDeltas(NeuralNet *net);
+
+
+
+
+/****
+ UTILITIES
+ *****/
 
 void print_net(NeuralNet net);
+
+//vector operations
+double dot_product(double *vector1, double *vector2,int vector_size);
+double *scalar_times_vector(double scalar, double *vector, int vector_size);
+double *vector_sub_vector(double *vector1, double *vector2, int vector_size);
+double *vector_entrywise_mult_vector(double *vector1, double *vector2, int vector_size);
+
+
 #endif /* neuralnet_h */
 
-//both sig and sig' should be stored in unit
+
