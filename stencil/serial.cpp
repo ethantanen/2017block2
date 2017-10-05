@@ -23,21 +23,21 @@ struct pixel {
 void apply_stencil_prewitt(const int radius, const int rows, const int cols, pixel *const in, pixel *const out){
     //convert image to grey scale
     
-    double *intensities;
+    double intensities[rows*cols];
     
     for(int i=0; i<rows; i++){
         for(int k=0; k<cols; k++){
             
-            int one_d_index = (rows*i)+col
-            pixel pix = in[one_d_index];
+            int one_d_index = (rows*i)+cols;
+            struct pixel pix = in[one_d_index];
             
             intensities[one_d_index] = (pix.red + pix.green + pix.blue)/3;
         }
     }
     
     //get stencils
-    double *prewittx = malloc(sizeof(double)*(cols*rows));
-    double *prewitty = malloc(sizeof(double)*(cols*rows));
+    double prewittx[cols*rows];
+    double prewitty[cols*rows]; 
     
     prewittX_kernel(3,3, prewittx);
     prewittY_kernel(3,3,prewitty);
@@ -71,15 +71,15 @@ void apply_stencil_prewitt(const int radius, const int rows, const int cols, pix
     
     
     //calculate output intensities
-    double *outIntensity[rows*cols];
+    double outIntensity[rows*cols];
     
     for(int i=0; i<rows; i++){
         for(int k=0; k<cols; k++){
             
             int i = (rows*i)+k;
             
-             outIntensity[i] = sqrt(bluredX[i]*bluredX[i] + bluredY[i]*bluredY[i])
-        }
+             outIntensity[i] = sqrt(bluredX[i]*bluredX[i] + bluredY[i]*bluredY[i]);
+       }
     }
     
     
@@ -90,9 +90,9 @@ void apply_stencil_prewitt(const int radius, const int rows, const int cols, pix
     for(int i=0; i<rows; i++){
         for(int k=0; k<cols; k++){
             
-            out[(i*rows)+col].red = outIntensity[i];
-            out[(i*rows)+col].green = outIntensity[i];
-            out[(i*rows)+col].blue = outIntensity[i];
+            out[(i*rows)+cols].red = outIntensity[i];
+            out[(i*rows)+cols].green = outIntensity[i];
+            out[(i*rows)+cols].blue = outIntensity[i];
         }
     }
 
