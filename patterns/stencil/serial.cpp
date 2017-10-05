@@ -114,7 +114,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     
     for(int i=0; i<rows; i++){
         for(int j=0; j<cols; j++){
-            int offset = i + (j*rows);
+            int offset = j + (i*rows);
             out_intensity[offset] = sqrt((Xedges[offset]*Xedges[offset])+(Yedges[offset]*Yedges[offset]));
         }
     }
@@ -122,7 +122,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     for(int i=0; i<rows; i++){
         for(int j=0; j<cols; j++){
             
-            int offset = i + (j*rows);
+            int offset = j + (i*rows);
             
             double intensity = out_intensity[offset];
    
