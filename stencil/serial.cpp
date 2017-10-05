@@ -71,7 +71,7 @@ void apply_stencil_prewitt( const int rows, const int cols, pixel *const in, pix
     for(int i=0; i<rows; i++){
         for(int k=0; k<cols; k++){
             
-            int one_d_index = (rows*i)+cols;
+            int one_d_index = (rows*i)+k;
             struct pixel pix = in[one_d_index];
             
             intensities[one_d_index] = (pix.red + pix.green + pix.blue)/3;
@@ -112,7 +112,7 @@ void apply_stencil_prewitt( const int rows, const int cols, pixel *const in, pix
     }
     
     
-    for(
+   
     
     
     //calculate output intensities
