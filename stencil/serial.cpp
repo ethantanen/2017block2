@@ -16,90 +16,6 @@ struct pixel {
     pixel(double r, double g, double b) : red(r), green(g), blue(b) {};
 };
 
-/*
- * Applies prewittX and prewittY setncils to an image
- */
-
-void apply_stencil_prewitt(const int radius, const int rows, const int cols, pixel *const in, pixel *const out){
-    //convert image to grey scale
-    
-    double intensities[rows*cols];
-    
-    for(int i=0; i<rows; i++){
-        for(int k=0; k<cols; k++){
-            
-            int one_d_index = (rows*i)+cols;
-            struct pixel pix = in[one_d_index];
-            
-            intensities[one_d_index] = (pix.red + pix.green + pix.blue)/3;
-        }
-    }
-    
-    //get stencils
-    double prewittx[cols*rows];
-    double prewitty[cols*rows]; 
-    
-    prewittX_kernel(3,3, prewittx);
-    prewittY_kernel(3,3,prewitty);
-    
-    
-    double bluredX[rows*cols];
-    double bluredY[rows*cols];
-    
-    //apply stencil
-    for(int i=0; i<rows; i++){
-        for(int j=0; j<cols; j++){
-            
-            int index = (rows*i)+cols; //index for blured x array
-            
-            //cycle through stencil
-            for(int kx=0, x=index-1; kx<3; kx++,x++){
-                for(int ky=0, y=index-1; ky<3; ky++,y++){
-                    
-                    int k_offset = (kx*i)+ky;
-                    int in_offset = (x*i)+y;
-                    
-                    
-                    bluredX[index] += intensities[k_offset] * prewittx[k_offset];
-                    bluredY[index] += intensities[k_offset] * prewitty[k_offset];
-                    
-                }
-            }
-        }
-    }
-    
-    
-    
-    //calculate output intensities
-    double outIntensity[rows*cols];
-    
-    for(int i=0; i<rows; i++){
-        for(int k=0; k<cols; k++){
-            
-            int i = (rows*i)+k;
-            
-             outIntensity[i] = sqrt(bluredX[i]*bluredX[i] + bluredY[i]*bluredY[i]);
-       }
-    }
-    
-    
-    
-    
-    
-    //convert back to color
-    for(int i=0; i<rows; i++){
-        for(int k=0; k<cols; k++){
-            
-            out[(i*rows)+cols].red = outIntensity[i];
-            out[(i*rows)+cols].green = outIntensity[i];
-            out[(i*rows)+cols].blue = outIntensity[i];
-        }
-    }
-
-    
-    
-    return;
-}
 
 
 /*
@@ -141,6 +57,92 @@ void prewittY_kernel(const int rows, const int cols, double * const kernel) {
                 kernel[i + (2*rows)] = -1.0;
         }
 }
+
+/*
+ * Applies prewittX and prewittY setncils to an image
+ */
+
+void apply_stencil_prewitt(const int radius, const int rows, const int cols, pixel *const in, pixel *const out){
+    //convert image to grey scale
+    
+    double intensities[rows*cols];
+    
+    for(int i=0; i<rows; i++){
+        for(int k=0; k<cols; k++){
+            
+            int one_d_index = (rows*i)+cols;
+            struct pixel pix = in[one_d_index];
+            
+            intensities[one_d_index] = (pix.red + pix.green + pix.blue)/3;
+        }
+    }
+    
+    //get stencils
+    double prewittx[cols*rows];
+    double prewitty[cols*rows];
+    
+    prewittX_kernel(3,3, prewittx);
+    prewittY_kernel(3,3,prewitty);
+    
+    
+    double bluredX[rows*cols];
+    double bluredY[rows*cols];
+    
+    //apply stencil
+    for(int i=0; i<rows; i++){
+        for(int j=0; j<cols; j++){
+            
+            int index = (rows*i)+cols; //index for blured x array
+            
+            //cycle through stencil
+            for(int kx=0, x=index-1; kx<3; kx++,x++){
+                for(int ky=0, y=index-1; ky<3; ky++,y++){
+                    
+                    int k_offset = (kx*i)+ky;
+                    int in_offset = (x*i)+y;
+                    
+                    
+                    bluredX[index] += intensities[k_offset] * prewittx[k_offset];
+                    bluredY[index] += intensities[k_offset] * prewitty[k_offset];
+                    
+                }
+            }
+        }
+    }
+    
+    
+    
+    //calculate output intensities
+    double outIntensity[rows*cols];
+    
+    for(int i=0; i<rows; i++){
+        for(int k=0; k<cols; k++){
+            
+            int i = (rows*i)+k;
+            
+            outIntensity[i] = sqrt(bluredX[i]*bluredX[i] + bluredY[i]*bluredY[i]);
+        }
+    }
+    
+    
+    
+    
+    
+    //convert back to color
+    for(int i=0; i<rows; i++){
+        for(int k=0; k<cols; k++){
+            
+            out[(i*rows)+cols].red = outIntensity[i];
+            out[(i*rows)+cols].green = outIntensity[i];
+            out[(i*rows)+cols].blue = outIntensity[i];
+        }
+    }
+    
+    
+    
+    return;
+}
+
 
 /*
  * The gaussian kernel provides a stencil for blurring images based on a 
