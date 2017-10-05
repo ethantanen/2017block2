@@ -62,9 +62,10 @@ void prewittY_kernel(const int rows, const int cols, double * const kernel) {
  * Applies prewittX and prewittY setncils to an image
  */
 
-void apply_stencil_prewitt(const int radius, const int rows, const int cols, pixel *const in, pixel *const out){
+void apply_stencil_prewitt( const int rows, const int cols, pixel *const in, pixel *const out){
     //convert image to grey scale
     
+
     double intensities[rows*cols];
     
     for(int i=0; i<rows; i++){
@@ -118,9 +119,9 @@ void apply_stencil_prewitt(const int radius, const int rows, const int cols, pix
     for(int i=0; i<rows; i++){
         for(int k=0; k<cols; k++){
             
-            int i = (rows*i)+k;
+            int index = (rows*i)+k;
             
-            outIntensity[i] = sqrt(bluredX[i]*bluredX[i] + bluredY[i]*bluredY[i]);
+            outIntensity[index] = sqrt(bluredX[index]*bluredX[index] + bluredY[index]*bluredY[index]);
         }
     }
     
@@ -252,12 +253,20 @@ int main( int argc, char* argv[] ) {
         outPixels[i].green = 0.0;
         outPixels[i].blue = 0.0;
     }
+
+     pixel * outPixelsTwo = (pixel *) malloc(rows * cols *sizeof(pixel));
+    for(int i=0; i<rows*cols; i++){
+	outPixelsTwo[i].red = 0.0;
+	outPixelsTwo[i].green = 0.0;
+	outPixelsTwo[i].blue = 0.0;
+	}
     
     // Do the stencil
     struct timespec start_time;
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC,&start_time);
-    apply_stencil(3, 32.0, rows, cols, imagePixels, outPixels);
+    apply_stencil(3, 32.0, rows, cols, imagePixels, outPixelsTwo);
+    apply_stencil_prewitt(3,3,outPixelsTwo,outPixels);
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
     printf("Stencil application took %dms\n",msec);
