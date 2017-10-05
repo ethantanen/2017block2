@@ -222,6 +222,14 @@ int main( int argc, char* argv[] ) {
     }
     
     // Create output array
+    pixel * outPixels1 = (pixel *) malloc(rows * cols * sizeof(pixel));
+    for(int i = 0; i < rows * cols; ++i) {
+        outPixels1[i].red = 0.0;
+        outPixels1[i].green = 0.0;
+        outPixels1[i].blue = 0.0;
+    }
+    
+    // Create output array
     pixel * outPixels = (pixel *) malloc(rows * cols * sizeof(pixel));
     for(int i = 0; i < rows * cols; ++i) {
         outPixels[i].red = 0.0;
@@ -233,7 +241,8 @@ int main( int argc, char* argv[] ) {
     struct timespec start_time;
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC,&start_time);
-    apply_stencil(3, 32.0, rows, cols, imagePixels, outPixels);
+    apply_stencil(3, 32.0, rows, cols, imagePixels, outPixels1);
+    apply_prewitt(rows,cols,outPixels1,outPixels);
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
     printf("Stencil application took %dms\n",msec);
