@@ -70,15 +70,15 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             pixel pix = in[offset];
             intensity[offset]= (pix.red+pix.green+pix.blue)/3;
            
-	}
+        }
     }
     
     
     /*
      arrays to hold stencils and edge values
      */
-    double wittX[9];
-    double wittY[9];
+    double *wittX = malloc(sizeof(double)*9);
+    double *wittY = malloc(sizeof(double)*9);
     
     prewittX_kernel(3,3,wittX);
     prewittY_kernel(3,3,wittY);
@@ -110,6 +110,9 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             }
         }
     }
+    
+    free(wittY);
+    free(wittX);
 
     double *out_intensity =(double *) malloc(sizeof(double)*(cols*rows));
     
