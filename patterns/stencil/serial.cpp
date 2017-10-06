@@ -136,9 +136,9 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
 
             printf("intensity[%d] = %f\n",offset,intensity);
          
-            out[i].red = intensity;
-            out[i].green = intensity;
-            out[i].blue = intensity;
+            out[offset].red = intensity;
+            out[offset].green = intensity;
+            out[offset].blue = intensity;
             
         }
     }
@@ -267,8 +267,10 @@ for(int i=0; i<rows*cols; i++){
     // Copy C array back into image for output
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
+           // printf("outPixels[%d] = %f\n");
             const size_t offset = i + (j*rows);
-            dest.at<Vec3b>(i, j) = Vec3b(floor(outPixels[offset].red * 255.0),
+//           printf("outPixels[%d] = %f\n",offset,outPixels[offset].red);
+		 dest.at<Vec3b>(i, j) = Vec3b(floor(outPixels[offset].red * 255.0),
                                          floor(outPixels[offset].green * 255.0),
                                          floor(outPixels[offset].blue * 255.0));
         }
