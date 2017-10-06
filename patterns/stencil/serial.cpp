@@ -105,7 +105,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
                    
 
 
-		      }
+                    }
                 }
             }
         }
@@ -139,6 +139,8 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             
         }
     }
+    
+    free(out_intensity);
 
 	return;    
 }
