@@ -117,7 +117,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
         for(int j=0; j<cols; j++){
            int offsett = i + (j*rows);
 
-             printf("offsett: %d\n",offsett); 
+//             printf("offsett: %d\n",offsett); 
   
 	   out_intensity[offsett] = sqrt((Xedges[offsett]*Xedges[offsett])+(Yedges[offsett]*Yedges[offsett]));
         }
@@ -131,7 +131,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             double intensity = out_intensity[offset];
    
 
-            printf("intensity[%d] = %f\n",offset,intensity);
+  //          printf("intensity[%d] = %f\n",offset,intensity);
          
             out[offset].red = intensity;
             out[offset].green = intensity;
