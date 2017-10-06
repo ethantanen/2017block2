@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
         int i;
         char passmatch[9]; // buffer for the matched password
         
-        for(i=(searchChunkSize*(\thread_id)-searchChunkSize; i<(searchChunkSize*thread_id); i++){
+        for(i=(searchChunkSize*(thread_id))-searchChunkSize; i<(searchChunkSize*thread_id); i++){
             genpass(i,passmatch);
             notfound = test(argv[1],passmatch);
             
