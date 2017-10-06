@@ -4,7 +4,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <time.h>
-#include <cilk/cilk.h>
+#include <cilk/cilk.c>
 
 using namespace cv;
 
@@ -46,20 +46,20 @@ void prewittX_kernel(const int rows, const int cols, double * const kernel) {
 }
 
 void prewittY_kernel(const int rows, const int cols, double * const kernel) {
-        if(rows != 3 || cols !=3) {
-                std::cerr << "Bad Prewitt kernel matrix\n";
-                return;
-        }
-        for(int i=0;i<3;i++) {
-                kernel[i + (0*rows)] = 1.0;
-                kernel[i + (1*rows)] = 0.0;
-                kernel[i + (2*rows)] = -1.0;
-        }
+    if(rows != 3 || cols !=3) {
+        std::cerr << "Bad Prewitt kernel matrix\n";
+        return;
+    }
+    for(int i=0;i<3;i++) {
+        kernel[i + (0*rows)] = 1.0;
+        kernel[i + (1*rows)] = 0.0;
+        kernel[i + (2*rows)] = -1.0;
+    }
 }
 
 void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     
-    double intensity[rows*cols];
+    double *intensity =(double *) malloc(sizeof(double) * (rows*cols));
     
     
     //Calculate intensities
@@ -70,22 +70,22 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             
             pixel pix = in[offset];
             intensity[offset]= (pix.red+pix.green+pix.blue)/3;
-           
-	}
+            
+        }
     }
     
     
     /*
      arrays to hold stencils and edge values
      */
-    double wittX[9];
-    double wittY[9];
+    double *wittX =(double *) malloc(sizeof(double)*9);
+    double *wittY =(double *) malloc(sizeof(double)*9);
     
     prewittX_kernel(3,3,wittX);
     prewittY_kernel(3,3,wittY);
     
-    double Xedges[cols*rows];
-    double Yedges[cols*rows];
+    double *Xedges =(double *) malloc(sizeof(double)*(cols*rows));
+    double *Yedges = (double *)malloc(sizeof(double)*(cols*rows));
     
     
     for(int i = 0; i < rows; ++i) {
@@ -103,52 +103,62 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
                         const int k_offset = kx + (ky*3);
                         Xedges[out_offset] += wittX[k_offset] * intensity[in_offset];
                         Yedges[out_offset] += wittY[k_offset] * intensity[in_offset];
-                   
-
-
-		      }
+                        
+                        
+                        
+                    }
                 }
             }
         }
     }
-
+    
+    free(wittY);
+    free(wittX);
+    free(intensity);
+    
     double *out_intensity =(double *) malloc(sizeof(double)*(cols*rows));
     
     for(int i=0; i<rows; i++){
         for(int j=0; j<cols; j++){
-           int offsett = i + (j*rows);
-
-//             printf("offsett: %d\n",offsett); 
-  
-	   out_intensity[offsett] = sqrt((Xedges[offsett]*Xedges[offsett])+(Yedges[offsett]*Yedges[offsett]));
+            int offsett = i + (j*rows);
+            
+            //             printf("offsett: %d\n",offsett);
+            
+            out_intensity[offsett] = sqrt((Xedges[offsett]*Xedges[offsett])+(Yedges[offsett]*Yedges[offsett]));
         }
     }
+    
+    free(Xedges);
+    free(Yedges);
+    
     
     for(int i=0; i<rows; i++){
         for(int j=0; j<cols; j++){
             
-            int offset = i + (j*rows);
+            int offset = i+ (j*rows);
             
-            double intensity = out_intensity[offset];
-   
-
-  //          printf("intensity[%d] = %f\n",offset,intensity);
-         
-            out[offset].red = intensity;
-            out[offset].green = intensity;
-            out[offset].blue = intensity;
+            // double intensity = out_intensity[offset];
+            
+            
+            //          printf("intensity[%d] = %f\n",offset,intensity);
+            
+            out[offset].red =out_intensity[offset];
+            out[offset].green = out_intensity[offset];
+            out[offset].blue = out_intensity[offset];
             
         }
     }
-
-	return;    
+    
+    free(out_intensity);
+    
+    return;
 }
 
 
 /*
- * The gaussian kernel provides a stencil for blurring images based on a 
+ * The gaussian kernel provides a stencil for blurring images based on a
  * normal distribution
- * The kernel will provide a template for the contribution of near by 
+ * The kernel will provide a template for the contribution of near by
  * pixels to a pixel under consideration.
  */
 void gaussian_kernel(const int rows, const int cols, const double stddev, double * const kernel) {
@@ -176,7 +186,7 @@ void gaussian_kernel(const int rows, const int cols, const double stddev, double
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
             kernel[i + (j*rows)] *= recip_sum;
-        }       
+        }
     }
 }
 
@@ -210,12 +220,12 @@ void apply_stencil(const int radius, const double stddev, const int rows, const 
 }
 
 int main( int argc, char* argv[] ) {
-
+    
     if(argc != 2) {
         std::cerr << "Usage: " << argv[0] << " imageName\n";
         return 1;
     }
-
+    
     // Read image
     Mat image;
     image = imread(argv[1], CV_LOAD_IMAGE_COLOR);
@@ -242,19 +252,20 @@ int main( int argc, char* argv[] ) {
         outPixels[i].green = 0.0;
         outPixels[i].blue = 0.0;
     }
-
-pixel *blurPixels = (pixel *)malloc(rows*cols*sizeof(pixel));
-for(int i=0; i<rows*cols; i++){
-	blurPixels[i].red = 0.0;
-	blurPixels[i].green = 0.0;
-	blurPixels[i].blue = 0.0;
-}
     
+    pixel *blurPixels = (pixel *)malloc(rows*cols*sizeof(pixel));
+    for(int i=0; i<rows*cols; i++){
+        blurPixels[i].red = 0.0;
+        blurPixels[i].green = 0.0;
+        blurPixels[i].blue = 0.0;
+    }
+    printf("ROWS: %d, COLS: %d\n",image.rows,image.cols);
     // Do the stencil
     struct timespec start_time;
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     apply_stencil(3, 32.0, rows, cols, imagePixels, blurPixels);
+    free(imagePixels);
     apply_prewitt(rows,cols,blurPixels,outPixels);
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
@@ -265,10 +276,10 @@ for(int i=0; i<rows*cols; i++){
     // Copy C array back into image for output
     for(int i = 0; i < rows; ++i) {
         for(int j = 0; j < cols; ++j) {
-           // printf("outPixels[%d] = %f\n");
+            // printf("outPixels[%d] = %f\n");
             const size_t offset = i + (j*rows);
-//           printf("outPixels[%d] = %f\n",offset,outPixels[offset].red);
-		 dest.at<Vec3b>(i, j) = Vec3b(floor(outPixels[offset].red * 255.0),
+            //           printf("outPixels[%d] = %f\n",offset,outPixels[offset].red);
+            dest.at<Vec3b>(i, j) = Vec3b(floor(outPixels[offset].red * 255.0),
                                          floor(outPixels[offset].green * 255.0),
                                          floor(outPixels[offset].blue * 255.0));
         }
@@ -277,8 +288,8 @@ for(int i=0; i<rows*cols; i++){
     imwrite("out.jpg", dest);
     
     
-    free(imagePixels);
+    
+    free(blurPixels);
     free(outPixels);
     return 0;
 }
-
