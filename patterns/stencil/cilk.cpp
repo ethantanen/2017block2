@@ -4,7 +4,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <time.h>
-#include <cilk/cilk.c>
+#include <cilk/cilk.h>
 
 using namespace cv;
 
