@@ -122,7 +122,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
 
              printf("offsett: %d\n",offsett); 
   
-//	   out_intensity[offsett] = sqrt((Xedges[offsett]*Xedges[offsett])+(Yedges[offsett]*Yedges[offsett]));
+	   out_intensity[offsett] = sqrt((Xedges[offsett]*Xedges[offsett])+(Yedges[offsett]*Yedges[offsett]));
         }
     }
     
