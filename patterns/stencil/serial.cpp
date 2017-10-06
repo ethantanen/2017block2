@@ -58,7 +58,7 @@ void prewittY_kernel(const int rows, const int cols, double * const kernel) {
 
 void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     
-    double intensity[rows*cols];
+    double *intensity =(double *) malloc(sizeof(double) * (rows*cols));
     
     
     //Calculate intensities
@@ -77,14 +77,14 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     /*
      arrays to hold stencils and edge values
      */
-    double *wittX = malloc(sizeof(double)*9);
-    double *wittY = malloc(sizeof(double)*9);
+    double *wittX =(double *) malloc(sizeof(double)*9);
+    double *wittY =(double *) malloc(sizeof(double)*9);
     
     prewittX_kernel(3,3,wittX);
     prewittY_kernel(3,3,wittY);
     
-    double Xedges[cols*rows];
-    double Yedges[cols*rows];
+    double *Xedges =(double *) malloc(sizeof(double)*(cols*rows));
+    double *Yedges = (double *)malloc(sizeof(double)*(cols*rows));
     
     
     for(int i = 0; i < rows; ++i) {
@@ -113,6 +113,7 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
     
     free(wittY);
     free(wittX);
+    free(intensity);
 
     double *out_intensity =(double *) malloc(sizeof(double)*(cols*rows));
     
@@ -125,20 +126,24 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
 	   out_intensity[offsett] = sqrt((Xedges[offsett]*Xedges[offsett])+(Yedges[offsett]*Yedges[offsett]));
         }
     }
-    
+
+   free(Xedges);
+   free(Yedges);
+
+ 
     for(int i=0; i<rows; i++){
         for(int j=0; j<cols; j++){
             
-            int offset = j + (i*rows);
+            int offset = i+ (j*rows);
             
-            double intensity = out_intensity[offset];
+           // double intensity = out_intensity[offset];
    
 
   //          printf("intensity[%d] = %f\n",offset,intensity);
          
-            out[offset].red = intensity;
-            out[offset].green = intensity;
-            out[offset].blue = intensity;
+            out[offset].red =out_intensity[offset];
+            out[offset].green = out_intensity[offset];
+            out[offset].blue = out_intensity[offset];
             
         }
     }
@@ -253,12 +258,13 @@ for(int i=0; i<rows*cols; i++){
 	blurPixels[i].green = 0.0;
 	blurPixels[i].blue = 0.0;
 }
-    
+printf("ROWS: %d, COLS: %d\n",image.rows,image.cols);    
     // Do the stencil
     struct timespec start_time;
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     apply_stencil(3, 32.0, rows, cols, imagePixels, blurPixels);
+    free(imagePixels);
     apply_prewitt(rows,cols,blurPixels,outPixels);
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
@@ -281,7 +287,8 @@ for(int i=0; i<rows*cols; i++){
     imwrite("out.jpg", dest);
     
     
-    free(imagePixels);
+    
+    free(blurPixels);
     free(outPixels);
     return 0;
 }
