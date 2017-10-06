@@ -104,7 +104,6 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
                         Yedges[out_offset] += wittY[k_offset] * intensity[in_offset];
                    
 
-//			printf("X[] = %f,  wittX[%d] = %f, wittY[%d] = %f, intensity[%d] = %f \n",Xedges[out_offset],k_offset,wittX[k_offset],k_offset,wittY[k_offset],in_offset,intensity[in_offset]);
 
 		      }
                 }
@@ -112,8 +111,6 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
         }
     }
 
-  // printf("check: %f\n",Xedges[0]); 
-   // fflush(stdout);
     double *out_intensity =(double *) malloc(sizeof(double)*(cols*rows));
     
     for(int i=0; i<rows; i++){
