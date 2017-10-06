@@ -69,7 +69,8 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             
             pixel pix = in[offset];
             intensity[offset]= (pix.red+pix.green+pix.blue)/3;
-        }
+           
+	}
     }
     
     
@@ -99,25 +100,29 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
                         // Acculate intensities in the output pixel
                         const int in_offset = x + (y*rows);
                         const int k_offset = kx + (ky*3);
-                        Xedges[out_offset] += prewittX_kernel[k_offset] * intensity[in_offset];
-                        Yedges[out_offset] += prewittY_kernel[k_offset] * intensity[in_offset];
-                    }
+                        Xedges[out_offset] += wittX[k_offset] * intensity[in_offset];
+                        Yedges[out_offset] += wittY[k_offset] * intensity[in_offset];
+                   
+
+//			printf("X[] = %f,  wittX[%d] = %f, wittY[%d] = %f, intensity[%d] = %f \n",Xedges[out_offset],k_offset,wittX[k_offset],k_offset,wittY[k_offset],in_offset,intensity[in_offset]);
+
+		      }
                 }
             }
         }
     }
 
-    
-    
-    double out_intensity[cols*rows];
+  // printf("check: %f\n",Xedges[0]); 
+   // fflush(stdout);
+    double *out_intensity =(double *) malloc(sizeof(double)*(cols*rows));
     
     for(int i=0; i<rows; i++){
         for(int j=0; j<cols; j++){
-            int offset = j + (i*rows);
+           int offsett = i + (j*rows);
 
-            printf("xe: %f, ye: %f\n",Xedges[0], Yedges[0]); 
-            fflush(stdout);
-	   out_intensity[offset] = sqrt((Xedges[offset]*Xedges[offset])+(Yedges[offset]*Yedges[offset]));
+             printf("offsett: %d\n",offsett); 
+  
+//	   out_intensity[offsett] = sqrt((Xedges[offsett]*Xedges[offsett])+(Yedges[offsett]*Yedges[offsett]));
         }
     }
     
@@ -137,7 +142,8 @@ void apply_prewitt(const int rows, const int cols, pixel *in, pixel *out){
             
         }
     }
-    
+
+	return;    
 }
 
 
