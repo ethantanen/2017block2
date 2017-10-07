@@ -20,6 +20,7 @@ typedef struct Node{
     double sigPrime;
     
     double littleDelta;
+    double bigDelta;
     
 }Node;
 
@@ -67,7 +68,7 @@ double sigPrime(double activation);
 
 
 //TODO: need calculate little delta and large delta functons
-void calculateLittleDeltas(NeuralNet *net);
+void calculateLittleDeltas(NeuralNet *net, double *target);
 void calculateBigDeltas(NeuralNet *net);
 
 
@@ -77,7 +78,9 @@ void calculateBigDeltas(NeuralNet *net);
  UTILITIES
  *****/
 
-void print_net(NeuralNet net);
+void print_net(NeuralNet *net);
+void print_weights(NeuralNet *net);
+void normalize(double *input, int size);
 
 //vector operations
 double dot_product(double *vector1, double *vector2,int vector_size);
