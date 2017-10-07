@@ -28,15 +28,19 @@ int main(int args, char **argv){
     double target[2] = {1,1};
     
     
-    for(int i=0; i<3; i++){
+    for(int i=0; i<2; i++){
     fastforward(net,in);
     
     calculateLittleDeltas(net, target);
     calculateBigDeltas(net);
+        
+        
+        print_net(net);
+        print_weights(net);
+        
     }
     
-    print_net(net);
-    print_weights(net);
+   
     
     
     
@@ -76,7 +80,7 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
     //TODO: srand() to seed rand()
     
     for(int i=0; i<in*hid; i++){
-        double val = (double)rand()/(double)RAND_MAX;
+        double val = .5;//(double)rand()/(double)RAND_MAX;
         if(val > .5){
             val += -.5;
         }
@@ -84,7 +88,7 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
     }
     
     for(int i=0; i<hid*out;i++){
-        double val = (double)rand()/(double)RAND_MAX;
+        double val = .5;//(double)rand()/(double)RAND_MAX;
         if(val>.5){
             val += -.5;
         }
@@ -193,7 +197,7 @@ void calculateBigDeltas(NeuralNet *net){
     //cycle through hidden layer
     for(int i=0; i<net->numHid; i++){
         
-        //cycle through output layer
+        //cycle through unot layer
         for(int j=0; j<net->numIn; j++){
             
             
