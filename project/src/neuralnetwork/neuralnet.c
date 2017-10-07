@@ -263,6 +263,7 @@ void print_net(NeuralNet *_net){
         Node node = net.outputLayer[i];
         printf("Activaton: %f, Output: %f, SigPrime: %f, LittleDelta: %f\n",node.activation,node.output,node.sigPrime,node.littleDelta);
     }
+    return;
 }
 
 void print_weights(NeuralNet *_net){
@@ -286,6 +287,8 @@ void print_weights(NeuralNet *_net){
     
     free(weightsIH);
     free(weightsHO);
+    
+    return;
     
 }
 
