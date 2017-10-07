@@ -186,7 +186,7 @@ void calculateLittleDeltas(NeuralNet *net, double *target){
 
 void calculateBigDeltas(NeuralNet *net){
     //learning rate * O * little delta
-    double learningRate = -.2;
+    double learningRate = 1;
 
     
     
