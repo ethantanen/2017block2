@@ -21,7 +21,7 @@ int main(int args, char **argv){
     
     
     NeuralNet *net = malloc(sizeof(NeuralNet));
-    net_init(2,2,2,net);
+    net_init(2,1,2,net);
     
     
     double in[2] = {1,1};
@@ -41,7 +41,7 @@ int main(int args, char **argv){
     }
     
    
-    
+    free(net);
     
     
 }
@@ -362,6 +362,7 @@ double *scalar_times_vector(double scalar, double *vector,int vector_size){
     for(int i=0; i<vector_size; i++){
         newVector[i] = vector[i]*scalar;
     }
+    
     return newVector;
 }
 
