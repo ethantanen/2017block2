@@ -28,19 +28,19 @@ int main(int args, char **argv){
     double target[2] = {1,1};
     
     
-    for(int i=0; i<2; i++){
+    for(int i=0; i<10000; i++){
     fastforward(net,in);
     
     calculateLittleDeltas(net, target);
     calculateBigDeltas(net);
         
         
-        print_net(net);
-        print_weights(net);
+       // print_net(net);
+       // print_weights(net);
         
     }
     
-   
+   print_net(net);
     free(net);
     
     
