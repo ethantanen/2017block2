@@ -21,26 +21,26 @@ int main(int args, char **argv){
     
     
     NeuralNet *net = malloc(sizeof(NeuralNet));
-    net_init(2,1,2,net);
+    net_init(1,10,1,net);
     
     
-    double in[2] = {1,1};
-    double target[2] = {1,1};
+    double in1[1] = {1};
+    double target1[1] = {0};
+    
+    double in2[2] = {0,0};
+    double target2[2] = {0,0};
     
     
     for(int i=0; i<1000000; i++){
-    fastforward(net,in);
+        
+        fastforward(net,in1);
     
-    calculateLittleDeltas(net, target);
-    calculateBigDeltas(net);
-        
-        
-       // print_net(net);
-       // print_weights(net);
-        
+        calculateLittleDeltas(net, target1);
+        calculateBigDeltas(net);
     }
+
     
-   print_net(net);
+    print_net(net);
     free(net);
     
     
@@ -80,7 +80,7 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
     //TODO: srand() to seed rand()
     
     for(int i=0; i<in*hid; i++){
-        double val = .5;//(double)rand()/(double)RAND_MAX;
+        double val = (double)rand()/(double)RAND_MAX;
         if(val > .5){
             val += -.5;
         }
@@ -88,7 +88,7 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
     }
     
     for(int i=0; i<hid*out;i++){
-        double val = .5;//(double)rand()/(double)RAND_MAX;
+        double val = (double)rand()/(double)RAND_MAX;
         if(val>.5){
             val += -.5;
         }
