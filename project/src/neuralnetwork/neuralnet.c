@@ -21,23 +21,25 @@ int main(int args, char **argv){
     
     
     NeuralNet *net = malloc(sizeof(NeuralNet));
-    net_init(1,10,1,net);
+    net_init(1,10,2,net);
     
     
     double in1[1] = {1};
-    double target1[1] = {0};
+    double target1[2] = {0,1};
     
-    double in2[2] = {0,0};
-    double target2[2] = {0,0};
+    double in2[1] = {0};
+    double target2[2] = {1,0};
     
     
     for(int i=0; i<1000000; i++){
-        
+       
         fastforward(net,in1);
-    
         calculateLittleDeltas(net, target1);
         calculateBigDeltas(net);
+        
     }
+    
+    fastforward(net,in1);
 
     
     print_net(net);
@@ -65,12 +67,14 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
     net->outputLayer = malloc(sizeof(Node)*out);
     
     //TODO: may need to add element to weights to account for bias
-    net->in_hid = malloc(sizeof(double)*in*hid);
-    net->hid_out = malloc(sizeof(double)*hid*out);
+    net->in_hid = malloc(sizeof(double)*(1+in)*hid);//1 is for the bias
+    net->hid_out = malloc(sizeof(double)*(1+hid)*out);
     
-    net->totalNumNeurons = in+hid+out;
-    net->totWIH = in*hid;
-    net->totWHO = hid*out;
+    net->totalNumNeurons = in+hid+out+2;//1 bias per hidden and input layer
+    net->totWIH = (in+1)*hid;
+    net->totWHO = (hid+1)*out;
+    
+    net->isTrained = 0;
     
     
     /*
@@ -79,7 +83,7 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
     
     //TODO: srand() to seed rand()
     
-    for(int i=0; i<in*hid; i++){
+    for(int i=0; i<(1+in)*hid; i++){
         double val = (double)rand()/(double)RAND_MAX;
         if(val > .5){
             val += -.5;
@@ -87,7 +91,7 @@ void net_init(int in, int hid, int out, struct NeuralNet *net){
         net->in_hid[i] = val;
     }
     
-    for(int i=0; i<hid*out;i++){
+    for(int i=0; i<(1+hid)*out;i++){
         double val = (double)rand()/(double)RAND_MAX;
         if(val>.5){
             val += -.5;
@@ -114,7 +118,7 @@ void fastforward(NeuralNet *net, double *in){
         
         //get weights for node i
         double weights[net->numIn];  //TODO: var bias = weights + 1
-        memcpy(&weights,net->in_hid+(i*net->numIn),sizeof(double)*net->numIn);
+        memcpy(&weights,net->in_hid+(i*(net->numIn+1)),sizeof(double)*net->numIn);
       
         double activation = dot_product(weights,in,net->numIn); //TODO: dot prod + bias
         double output = sigmoid(activation);
@@ -133,7 +137,7 @@ void fastforward(NeuralNet *net, double *in){
         
         //get weights for node i
         double weights[net->numHid];
-        memcpy(&weights,net->hid_out+(i*net->numHid),sizeof(double)*net->numHid);
+        memcpy(&weights,net->hid_out+(i*(net->numHid+1)),sizeof(double)*net->numHid);
         
         double activation = dot_product(weights,hidden_layer_outputs,net->numHid); //TODO: same todo as above
         double output = sigmoid(activation);
@@ -159,14 +163,24 @@ void calculateLittleDeltas(NeuralNet *net, double *target){
     //little d for output layer is sigprime(nodes output) * (output-target)
     
     double outputLittleD[net->numOut];
+    double Error = 0;
     
-    //compute little for every node in output layer
+    //compute little d for every node in output layer
     for(int i=0; i<net->numOut; i++){
         Node node = net->outputLayer[i];
         double littled = node.sigPrime * (node.output-target[i]);
         net->outputLayer[i].littleDelta = littled;
         outputLittleD[i] = littled;
+        Error +=.5*(node.output-target[i])*(node.output-target[i]);
     }
+    
+    //compute and update bias weights
+    //TODO: possibely add two delta bias variable into the net --not pretty but'll get the ol'job done
+    //for(int i=0; i<net->numOut)
+    
+    
+    
+    
     
     //little d for a hidden layer is sigprime(nodes output) * (dotproduct(weights,error) for next layer)
     //the * is entrywise multplication
@@ -175,8 +189,10 @@ void calculateLittleDeltas(NeuralNet *net, double *target){
         double weights[net->numOut];
         
         //get weights that connect node to nodes in (current layer + 1)
+        
         for(int k=0; k<net->numOut; k++){
-            weights[i]= net->hid_out[i*net->numOut];
+            //TODO: changed
+            weights[k]= net->hid_out[i+(k*(net->numHid+1))];
         }
         
         double e = dot_product(weights,outputLittleD,net->numOut);
@@ -185,19 +201,44 @@ void calculateLittleDeltas(NeuralNet *net, double *target){
         net->hiddenLayer[i].littleDelta =sigprime * e;
     }
     
+    //little d for the bias node in the hidden layer is the same
+    double weights[net->numOut];
+    //get associated weights
+    for(int i=0; i<net->numOut;i++){
+        weights[i] = net->hid_out[(net->numHid+1)+(i*(net->numHid+1))];
+    }
+     
+                                        
+    /*
+    double e = dot_product(weights,outputLittleD,net->numOut);
+    double sigprime = sigPrime(1.0);
+                                        
+    double littleDBias = e * sigprime;
+    
+    double bigDBias = littleDBias * .1;
+    */
+
+    
+    
+    
+    
+    if(Error < .0001){
+        net->isTrained = 1;
+    }
+    
     return;
 }
 
 void calculateBigDeltas(NeuralNet *net){
     //learning rate * O * little delta
-    double learningRate = 1;
+    double learningRate = .1;
 
     
     
     //cycle through hidden layer
     for(int i=0; i<net->numHid; i++){
         
-        //cycle through unot layer
+        //cycle through input layer
         for(int j=0; j<net->numIn; j++){
             
             

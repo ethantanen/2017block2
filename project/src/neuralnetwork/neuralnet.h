@@ -43,6 +43,8 @@ typedef struct NeuralNet{
     int totWIH;
     int totWHO;
     
+    int isTrained;
+    
     
 }NeuralNet;
 
