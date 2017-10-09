@@ -17,9 +17,9 @@ int main (int argc, char **argv){
     double learning_rate = .0001;
     double Error;
     
-    int in = 2+1; //plus one is the bias node
+    int in = 3+1; //plus one is the bias node
     int hid = 2+1;
-    int out = 2;
+    int out = 3;
     
     double weights_ih[in][hid];
     double weights_ho[hid][out];
@@ -35,8 +35,8 @@ int main (int argc, char **argv){
     double output_ld[out];
     double hidden_ld[out];
     
-    double input[2]={1,1};
-    double target[2]={0,1};
+    double input[3]={1,1,0};
+    double target[3]={0,1,0};
     
     
     //set biases output which is always one
@@ -63,7 +63,7 @@ int main (int argc, char **argv){
     }
     
     
-    for(int c =0; c < 100000000; c++){
+    for(int c =0; c < 1000000; c++){
     
     //NOTE: the zeroth node in a node array is the bias node
     
