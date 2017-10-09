@@ -36,7 +36,7 @@ int main (int argc, char **argv){
     double hidden_ld[out];
     
     double input[2]={1,1};
-    double target[2]={0,1};
+    double target[2]={0,0};
     
     
     //set biases output which is always one
