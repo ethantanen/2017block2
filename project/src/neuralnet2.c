@@ -14,11 +14,11 @@
 
 int main (int argc, char **argv){
     
-    double learning_rate = .0001;
+    double learning_rate = .1;
     double Error;
     
     int in = 3+1; //plus one is the bias node
-    int hid = 2+1;
+    int hid = 3+1;
     int out = 3;
     
     double weights_ih[in][hid];
@@ -36,7 +36,7 @@ int main (int argc, char **argv){
     double hidden_ld[out];
     
     double input[3]={1,1,0};
-    double target[3]={0,1,0};
+    double target[3]={1,0,0};
     
     
     //set biases output which is always one
@@ -45,25 +45,34 @@ int main (int argc, char **argv){
     
     //populate input_output with input data
     for(int i=1; i<in; i++){
+        
         input_output[i] = target[i-1];
     }
     
     
     //randomize weights
-    for(int i=0; i<in+1; i++){
-        for(int j=0; j<hid+1; j++){
-            weights_ih[i][j] = (double)rand()/(double)RAND_MAX;
+    for(int i=0; i<in; i++){
+        for(int j=0; j<hid; j++){
+            double val = (double)rand()/(double)RAND_MAX;
+            if(val>.5){
+                val -= .5;
+            }
+            weights_ih[i][j] = val;
         }
     }
     
-    for(int i=0; i<hid+1; i++){
+    for(int i=0; i<hid; i++){
         for(int j=0; j<out; j++){
-            weights_ih[i][j] = (double)rand()/(double)RAND_MAX;
+            double val = (double)rand()/(double)RAND_MAX;
+            if(val>.5){
+                val -= .5;
+            }
+            weights_ho[i][j] = val;
         }
     }
     
     
-    for(int c =0; c < 1000000; c++){
+    for(int c =0; c < 10000000; c++){
     
     //NOTE: the zeroth node in a node array is the bias node
     
@@ -84,14 +93,14 @@ int main (int argc, char **argv){
             output_activation[i] += weights_ho[j][i];
         }
         //compute output layer output
-        output_output[i] = sigmoid(output_activation[0]);
+        output_output[i] = sigmoid(output_activation[i]);
     }
     
     //compute output layer little d
     Error = 0;
-    for(int i=0; i<hid; i++){
+    for(int i=0; i<out; i++){
         output_ld[i] = sig_prime(output_output[i]) * (output_output[i]-target[i]);
-        Error += .5*(hidden_output[i]-target[i])*(hidden_output[i]-target[i]);
+        Error += .5*(output_output[i]-target[i])*(output_output[i]-target[i]);
 
     }
     
@@ -107,7 +116,6 @@ int main (int argc, char **argv){
     //compute h_i big d and change weights
     for(int i=1; i<hid; i++){
         for(int j=0; j<in; j++){
-            //TODO: inputs should be moved into an array title input_output --> should the output be the input passed through the sigmoid function
             double ih_bd = learning_rate * hidden_ld[i] * input_output[j];
             weights_ih[j][i] = weights_ih[j][i] - ih_bd;
         }
@@ -120,23 +128,29 @@ int main (int argc, char **argv){
             weights_ho[j][i] = weights_ho[j][i] - ho_bd;
         }
     }
+   
+    /*if(c % 100){
+        printf("Error: %f\n",Error);
+        
+        for(int i=0; i<out; i++){
+            printf("Output[%d] = %f, Target[%d] = %f\n",i,hidden_output[i],i,target[i]);
+        }
+    }*/
     
-    
-    if(Error<.0001){
+    if(Error<.000001){
         
         //PRINT NET
+        printf("\nPRINT NET\n");
         for(int i=0; i<out; i++){
             
             printf("output_out[%d] = %f\n",i,output_output[i]);
         }
-
-        
+        return 1;
     }
     }
 	
-for(int p=0; p<out; p++){
-printf("output_out[%d] = %f\n",p,output_output[p]);
-}
+    
+    
     return 1;    
         
 }
