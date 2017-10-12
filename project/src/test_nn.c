@@ -18,10 +18,6 @@ int main (int argc, char **argv){
     int hid;
     int out;
     
-
-    
-    
-    
     
     //check if there is a binary file for aquiring weights
     if(argc < 2){
@@ -51,59 +47,94 @@ int main (int argc, char **argv){
     //create arrays to hold the nn weights
     printf("\nReading weights from %s...\n",argv[1]);
     
-    double weights_ih[in][hid-1];
-    double weights_ho[hid][out];
+    double weights_ih[in+1][hid+1];
+    double weights_ho[hid+1][out+1];
     
-    size_t c = fread(weights_ih,sizeof(double),in*(hid-1),f);
-    size_t d = fread(weights_ho,sizeof(double),hid*out,f);
+    size_t c = fread(weights_ih,sizeof(double),(in+1)*(hid+1),f);
+    size_t d = fread(weights_ho,sizeof(double),(hid+1)*(out+1),f);
     
-    printf("%zu elements read of %d elements in weights_ih\n",c,(in*(hid-1)));
-    printf("%zu elements read of %d elements in weights_ho\n\n",d,(hid*out));
+    printf("%zu elements read of %d elements in weights_ih\n",c,(in+1)*(hid+1));
+    printf("%zu elements read of %d elements in weights_ho\n\n",d,(hid+1)*(out+1));
 
     
-    double input_activation[in];
-    double hidden_activation[hid];
-    double output_activation[out];
+    const int TRAIN_TOTAL = 10;
+    const int IMAGE_SIZE = (28*28+1);
+    const int TARGET_SIZE = (10+1);
     
-    double input_output[] = {(double)*argv[2],(double)*argv[3]};
-    double hidden_output[hid];
-    double output_output[out];
+    double *_images = malloc(sizeof(double)*10000*IMAGE_SIZE);
+    double *_targets = malloc(sizeof(double)*10000*TARGET_SIZE);
     
+    get_mnist(_images,_targets);
     
-    for(int i=0; i<hid; i++){
-        for(int k=0; k<in; k++){
-            
-            
-            printf("weight[%d][%d] = %f\n",k,i,weights_ih[k][i]);
+    double **images = malloc(sizeof(double *)*TRAIN_TOTAL);
+    double **targets = malloc(sizeof(double *)*TRAIN_TOTAL);
+    
+    for(int i=0; i<TRAIN_TOTAL; i++){
+        images[i] = &_images[i*IMAGE_SIZE];
+        targets[i]= &_targets[i*TARGET_SIZE];
+    }
+    
+    printf("\nMNIST data parsed into image and target arrays...\n");
+    
+    int i=0,j=0;
+    
+    double input[IMAGE_SIZE];
+    double target[TARGET_SIZE];
+    
+    double Error=0;
+    
+    double hidden_activation[hid+1];
+    double output_activation[out+1];
+    
+    double hidden_output[hid+1];
+    double output_output[out+1];
+    
+
+    
+    for(int c=0; c<TRAIN_TOTAL; c++){
+        //create input vector
+        for(i=0; i<IMAGE_SIZE;i++){
+            input[i] = *(images[c]+i);
+        }
+        
+        //create target vector
+        for(i = 0; i<(TARGET_SIZE);i++){
+            target[i] = *(targets[c]+i);
+        }
+        
+        
+        //calc hidden_activaton & hidden_output
+        for(i=1; i<=hid; i++){
+            hidden_activation[i] = weights_ih[0][i];
+            for(int j=1; j<=in; j++){
+                hidden_activation[i] += weights_ih[j][i] * input[j];
+            }
+            hidden_output[i] = sigmoid(hidden_activation[i]);
+        }
+        
+        
+        
+        //calc output_activatin & output_output
+        for(i=1; i<=out; i++){
+            output_activation[i] = weights_ho[0][i];
+            for(int j=1; j<=hid; j++){
+                output_activation[i] += weights_ho[j][i] * hidden_output[j];
+            }
+            output_output[i] = sigmoid(output_activation[i]);
+        }
+        
+        printf("OUTPUT over TARGET\n");
+        for(int i=0; i<out;i++){
+            printf("%f ",output_output[i]);
+        }
+        printf("\n");
+        for(int i=0; i<out;i++){
+            printf("%f ",target[i]);
         }
         printf("\n");
     }
     
     
-    
-    //compute hidden layer activations
-    for(int i=1; i<hid; i++){
-        hidden_activation[i] =  weights_ih[0][i];//the weight that connects node i in the hidden layer to node k in the input layer
-        for(int j=1; j<in; j++){
-            hidden_activation[i] += weights_ih[j][i] * input_output[j];
-        }
-        //compute hidden layer output
-        hidden_output[i] = sigmoid(hidden_activation[i]);
-    }
-    
-    //compute output layer activations
-    for(int i=0; i<out; i++){
-        output_activation[i] = weights_ho[0][i];
-        for(int j=1; j<hid; j++){
-            output_activation[i] += weights_ho[j][i] * hidden_output[i];
-        }
-        //compute output layer output
-        output_output[i] = sigmoid(output_activation[i]);
-    }
-    
-    for(int i=0; i<out; i++){
-        printf("output[%d] = %f\n",i,output_output[i]);
-    }
 }
 
 
@@ -118,5 +149,53 @@ double sigmoid(double activation){
 double sig_prime(double activation){
     return activation*(1-activation);
 }
+
+
+
+
+int get_mnist(double *input,double *target){
+    mnist_data *data;
+    int input_index = 0;
+    int label_index = 0;
+    unsigned int image_count;
+    int labels[10000];
+    int ret;
+    printf("Loading MNIST dataset...\n");
+    //load data from files
+    if ((ret = mnist_load("t10k-images-idx3-ubyte", "t10k-labels-idx1-ubyte", &data, &image_count))) {
+        printf("An error occured: %d\n", ret);
+    } else {
+        printf("Images Loaded: %d\n", image_count);
+    }
+    //flatted image data into huge array aswell as add bias node to the beginning of each image & store labels in int format in another array for further processing
+    for(int i=0; i<10000; i++){
+        
+        input[input_index] = 0;
+        input_index++;
+        
+        for(int j=0; j<28; j++){
+            for(int k=0; k<28; k++){
+                input[input_index] = data[i].data[j][k];
+                input_index++;
+            }
+        }
+        labels[i] = data[i].label;
+    }
+    for(int i=0; i<10000; i++){
+        target[label_index] = 0;
+        label_index++;
+        int label = labels[i];
+        for(int j=1; j<=10; j++){
+            if(j==label+1){
+                target[label_index] = 1;
+            }else{
+                target[label_index] = 0;
+            }
+            label_index++;
+        }
+    }
+    return image_count;
+}
+
 
 
