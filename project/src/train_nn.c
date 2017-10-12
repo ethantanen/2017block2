@@ -100,7 +100,7 @@ int main (int argc, char **argv){
     
     
     //Begin Timer
-    clock_gettime(CLOCK_MONOTONIC,start_time);
+    clock_gettime(CLOCK_MONOTONIC,&start_time);
     
     
     for(int epoch = 0; epoch <1000000; epoch++){
@@ -206,14 +206,14 @@ int main (int argc, char **argv){
         
         if(Error < error_threshold ){
             printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
-            clock_gettime(CLOCK_MONOTONIC,end_time);
+            clock_gettime(CLOCK_MONOTONIC,&end_time);
             save_net(weights_ih,weights_ho,NULL);
             return 0;
         }
     
     }
     
-    clock_gettime(CLOCK_MONOTONIC,end_time);
+    clock_gettime(CLOCK_MONOTONIC,&end_time);
     get_elapsed_time(start_time,end_time);
     printf("Error did not reach threshold before the last epoch\n");
     save_net(weights_ih,weights_ho,NULL);
