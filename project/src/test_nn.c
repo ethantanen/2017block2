@@ -123,7 +123,7 @@ int main (int argc, char **argv){
             output_output[i] = sigmoid(output_activation[i]);
         }
         
-        printf("OUTPUT over TARGET\n");
+        printf("\nOUTPUT over TARGET\n");
         for(int i=0; i<out;i++){
             printf("%f ",output_output[i]);
         }
