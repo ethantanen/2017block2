@@ -143,7 +143,7 @@ int main (int argc, char **argv){
             
             
             //calc hidden_activaton & hidden_output
-            cilk_for(i=1; i<=hid; i++){
+            for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
                 for(int j=1; j<=in; j++){
                     hidden_activation[i] += weights_ih[j][i] * input[j];
