@@ -112,7 +112,7 @@ int main (int argc, char **argv){
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     
     
-    cilk_for(int epoch = 0; epoch <1000000; epoch++){
+    for(int epoch = 0; epoch <1000000; epoch++){
         /***********
          Forward Propagate
          ***********/
@@ -123,7 +123,7 @@ int main (int argc, char **argv){
         
         int rand_index = rand() % TRAIN_TOTAL;
         
-        for(int c = 0; c < TRAIN_TOTAL; c++){
+        cilk_for(int c = 0; c < TRAIN_TOTAL; c++){
             
             int train_index = (c + rand_index) % TRAIN_TOTAL;
             //printf("Train Index: %d\n",train_index);
@@ -210,17 +210,19 @@ int main (int argc, char **argv){
              }
              */
         }
+        
+        
+        if(Error < error_threshold ){
+            printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
+            clock_gettime(CLOCK_MONOTONIC,&end_time);
+            get_elapsed_time(start_time,end_time);
+            save_net(weights_ih,weights_ho,NULL);
+            return 1;
+        }
     
         
     }
     
-    if(Error < error_threshold ){
-        printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
-        clock_gettime(CLOCK_MONOTONIC,&end_time);
-        get_elapsed_time(start_time,end_time);
-        save_net(weights_ih,weights_ho,NULL);
-        return 1;
-    }
     
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     get_elapsed_time(start_time,end_time);
