@@ -210,17 +210,16 @@ int main (int argc, char **argv){
              }
              */
         }
+    
         
-        
-        
-        if(Error < error_threshold ){
-            printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
-            clock_gettime(CLOCK_MONOTONIC,&end_time);
-            get_elapsed_time(start_time,end_time);
-            save_net(weights_ih,weights_ho,NULL);
-            return 1;
-        }
-        
+    }
+    
+    if(Error < error_threshold ){
+        printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
+        clock_gettime(CLOCK_MONOTONIC,&end_time);
+        get_elapsed_time(start_time,end_time);
+        save_net(weights_ih,weights_ho,NULL);
+        return 1;
     }
     
     clock_gettime(CLOCK_MONOTONIC,&end_time);
