@@ -35,7 +35,7 @@ int main (int argc, char **argv){
     
     //char *file_name = "out.bin";
     
-    const int TRAIN_TOTAL = 10;
+    const int TRAIN_TOTAL = 3;
     const int IMAGE_SIZE = (28*28+1);
     const int TARGET_SIZE = (10+1);
     

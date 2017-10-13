@@ -218,7 +218,7 @@ int main (int argc, char **argv){
             clock_gettime(CLOCK_MONOTONIC,&end_time);
             get_elapsed_time(start_time,end_time);
             save_net(weights_ih,weights_ho,NULL);
-            return 0;
+            return 1;
         }
         
     }
@@ -228,7 +228,7 @@ int main (int argc, char **argv){
     printf("Error did not reach threshold before the last epoch\n");
     save_net(weights_ih,weights_ho,NULL);
     
-    return 0;
+    return 1;
     
 }
 
