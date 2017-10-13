@@ -123,7 +123,7 @@ int main (int argc, char **argv){
         
         int rand_index = rand() % TRAIN_TOTAL;
         
-        cilk_for(int c = 0; c < TRAIN_TOTAL; c++){
+        for(int c = 0; c < TRAIN_TOTAL; c++){
             
             int train_index = (c + rand_index) % TRAIN_TOTAL;
             //printf("Train Index: %d\n",train_index);
@@ -143,7 +143,7 @@ int main (int argc, char **argv){
             
             
             //calc hidden_activaton & hidden_output
-            for(i=1; i<=hid; i++){
+            cilk_for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
                 for(int j=1; j<=in; j++){
                     hidden_activation[i] += weights_ih[j][i] * input[j];
