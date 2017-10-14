@@ -21,7 +21,7 @@
 #include <math.h>
 #include <string.h>
 #include <time.h>
-#include <cilk/cilk.h>
+#include <omp.h>
 
 #define USE_MNIST_LOADER
 #define MNIST_STATIC
@@ -111,12 +111,23 @@ int main (int argc, char **argv){
     //Begin Timer
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     
+    int chunksize = 500000;
     
-    for(int epoch = 0; epoch <1000000; epoch++){
+    omp_set_num_threads(2);
+    #pragma omp parallel{
+    
+    int thread_id = omp_get_thread_num();
+
+    
+    
+    for(int epoch = ((thread_id+1) * chunksize)-chunksize; epoch <((thread_id+1)*chunksize); epoch++){
+        
+        
+        
         /***********
          Forward Propagate
          ***********/
-        printf("Epoch: %d, Error: %f\n",epoch,Error);
+        //printf("Epoch: %d, Error: %f\n",epoch,Error);
         Error = 0;
         
         int train_index = 0;
@@ -183,6 +194,7 @@ int main (int argc, char **argv){
             
             
             //calc hidden_bg and update weights
+            #pragma omp critical 
             for(i=1; i<=hid; i++){
                 weights_ih[0][i] -= learning_rate * hidden_ld[i];
                 for(j=1; j<=in; j++){
@@ -212,18 +224,20 @@ int main (int argc, char **argv){
         }
         
         
-        if(Error < error_threshold ){
+        
+        
+    }
+    }
+        
+    if(Error < error_threshold ){
             printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
             clock_gettime(CLOCK_MONOTONIC,&end_time);
             get_elapsed_time(start_time,end_time);
             save_net(weights_ih,weights_ho,NULL);
             return 1;
-        }
-    
-        
     }
-    
-    
+
+
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     get_elapsed_time(start_time,end_time);
     printf("Error did not reach threshold before the last epoch\n");
