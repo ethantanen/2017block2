@@ -44,7 +44,7 @@ int main (int argc, char **argv){
     
     //char *file_name = "out.bin";
     
-    const int TRAIN_TOTAL = 10;
+    const int TRAIN_TOTAL = 1;
     const int IMAGE_SIZE = (28*28+1);
     const int TARGET_SIZE = (10+1);
     
@@ -145,7 +145,7 @@ int main (int argc, char **argv){
             //calc hidden_activaton & hidden_output
             for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
-                for(int j=1; j<=in; j++){
+               for(int j=1; j<=in; j++){
                     hidden_activation[i] += weights_ih[j][i] * input[j];
                 }
                 hidden_output[i] = sigmoid(hidden_activation[i]);
