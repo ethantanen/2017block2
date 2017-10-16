@@ -159,10 +159,10 @@ int main (int argc, char **argv){
     double error_target = 0;
     for(int i=0; i<TRAIN_TOTAL; i++){
         
-        error_target+= .5*(error_x-1)(error_x-1);
+        error_target+= .5*(error_x[i]-1)*(error_x[i]-1);
         
     }
-    printf("Error Targ: %f\n",error_target);
+    printf("Error: %f  Error Targ: %f\n",Error,error_target);
     
 }
 

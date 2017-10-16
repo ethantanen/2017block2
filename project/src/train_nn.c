@@ -22,7 +22,7 @@
 
 
 #define in (28*28)
-#define hid 20
+#define hid 15
 #define out 10
 
 
@@ -33,7 +33,7 @@ int main (int argc, char **argv){
     struct timespec end_time;
     
     
-    //char *file_name = "out.bin";
+    char *file_name = "serial.bin";
     
     const int TRAIN_TOTAL = 3;
     const int IMAGE_SIZE = (28*28+1);
@@ -207,7 +207,7 @@ int main (int argc, char **argv){
             printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
             clock_gettime(CLOCK_MONOTONIC,&end_time);
             get_elapsed_time(start_time,end_time);
-            save_net(weights_ih,weights_ho,NULL);
+            save_net(weights_ih,weights_ho,file_name);
             return 0;
         }
     
@@ -216,7 +216,7 @@ int main (int argc, char **argv){
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     get_elapsed_time(start_time,end_time);
     printf("Error did not reach threshold before the last epoch\n");
-    save_net(weights_ih,weights_ho,NULL);
+    save_net(weights_ih,weights_ho,file_name);
     
     return 0;
     
@@ -285,7 +285,7 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
     
     printf("Network being saved to %s...\n",file_name);
     
-    FILE *f=fopen("out.bin","wb");
+    FILE *f=fopen(file_name,"wb");
     
     if(f==NULL){
         printf("file failed to open. unfortunetly the network data is lost...");

@@ -24,7 +24,7 @@
 
 
 #define in (28*28)
-#define hid 20
+#define hid 15
 #define out 10
 
 
@@ -139,7 +139,7 @@ int main (int argc, char **argv){
             //calc hidden_activaton & hidden_output
             for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
-                for(int j=1; j<=in; j++){
+                cilk_for(int j=1; j<=in; j++){
                     hidden_activation[i] += weights_ih[j][i] * input[j];
                 }
                 hidden_output[i] = sigmoid(hidden_activation[i]);
@@ -151,7 +151,7 @@ int main (int argc, char **argv){
             //calc output_activatin & output_output
             for(i=1; i<=out; i++){
                 output_activation[i] = weights_ho[0][i];
-                for(int j=1; j<=hid; j++){
+                cilk_for(int j=1; j<=hid; j++){
                     output_activation[i] += weights_ho[j][i] * hidden_output[j];
                 }
                 output_output[i] = sigmoid(output_activation[i]);
@@ -221,7 +221,7 @@ int main (int argc, char **argv){
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     get_elapsed_time(start_time,end_time);
     printf("Error did not reach threshold before the last epoch\n");
-    save_net(weights_ih,weights_ho,NULL);
+    save_net(weights_ih,weights_ho,file_name);
     
     return 0;
     

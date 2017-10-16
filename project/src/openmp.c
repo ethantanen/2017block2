@@ -24,7 +24,7 @@
 
 
 #define in (28*28)
-#define hid 20
+#define hid 15
 #define out 10
 
 
