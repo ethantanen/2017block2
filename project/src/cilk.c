@@ -14,6 +14,7 @@
 #include <string.h>
 #include <time.h>
 #include <cilk/cilk.h>
+#include <pthread.h>
 
 
 #define USE_MNIST_LOADER
@@ -30,6 +31,7 @@
 
 int main (int argc, char **argv){
     
+    pthrea
     
     struct timespec start_time;
     struct timespec end_time;
@@ -139,7 +141,8 @@ int main (int argc, char **argv){
             //calc hidden_activaton & hidden_output
             for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
-                cilk_for(int j=1; j<=in; j++){
+                #pragma simd
+                for(int j=1; j<=in; j++){
                     hidden_activation[i] += weights_ih[j][i] * input[j];
                 }
                 hidden_output[i] = sigmoid(hidden_activation[i]);
@@ -151,7 +154,8 @@ int main (int argc, char **argv){
             //calc output_activatin & output_output
             for(i=1; i<=out; i++){
                 output_activation[i] = weights_ho[0][i];
-                cilk_for(int j=1; j<=hid; j++){
+                #pragma simd
+                for(int j=1; j<=hid; j++){
                     output_activation[i] += weights_ho[j][i] * hidden_output[j];
                 }
                 output_output[i] = sigmoid(output_activation[i]);
