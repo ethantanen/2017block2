@@ -33,7 +33,7 @@ int main (int argc, char **argv){
     
     struct timespec start_time;
     struct timespec end_time;
-
+    
     
     const int TRAIN_TOTAL = 3;
     const int IMAGE_SIZE = (28*28+1);

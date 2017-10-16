@@ -35,7 +35,7 @@ int main (int argc, char **argv){
     struct timespec end_time;
     
     
-    //char *file_name = "out.bin";
+    char *file_name = "cilk.bin";
     
     const int TRAIN_TOTAL = 3;
     const int IMAGE_SIZE = (28*28+1);
@@ -104,7 +104,7 @@ int main (int argc, char **argv){
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     
     
-    for(int epoch = 0; epoch <1000000; epoch++){
+    for(int epoch = 0; epoch <20000; epoch++){
         /***********
          Forward Propagate
          ***********/
@@ -137,7 +137,7 @@ int main (int argc, char **argv){
             
             
             //calc hidden_activaton & hidden_output
-            cilk_for(i=1; i<=hid; i++){
+            for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
                 for(int j=1; j<=in; j++){
                     hidden_activation[i] += weights_ih[j][i] * input[j];
@@ -145,6 +145,7 @@ int main (int argc, char **argv){
                 hidden_output[i] = sigmoid(hidden_activation[i]);
             }
             
+        
             
             
             //calc output_activatin & output_output
@@ -211,7 +212,7 @@ int main (int argc, char **argv){
             printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
             clock_gettime(CLOCK_MONOTONIC,&end_time);
             get_elapsed_time(start_time,end_time);
-            save_net(weights_ih,weights_ho,NULL);
+            save_net(weights_ih,weights_ho,file_name);
             return 0;
         }
         
@@ -289,7 +290,7 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
     
     printf("Network being saved to %s...\n",file_name);
     
-    FILE *f=fopen("out.bin","wb");
+    FILE *f=fopen(file_name,"wb");
     
     if(f==NULL){
         printf("file failed to open. unfortunetly the network data is lost...");
