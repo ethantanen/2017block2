@@ -284,7 +284,7 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
     
     printf("Network being saved to %s...\n",file_name);
     
-    FILE *f=fopen("out.bin","wb");
+    FILE *f=fopen(file_name,"wb");
     
     if(f==NULL){
         printf("file failed to open. unfortunetly the network data is lost...");
@@ -312,6 +312,30 @@ long get_elapsed_time(struct timespec start_time,struct timespec end_time){
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
     printf("Total time to train: %ld ms...",msec);
     return msec;
+}
+
+
+int combine_weights(double weights_ih_i[in+1][hid+1],double weights_ih_ii[in+1][hid+1], double weights_ho_i[hid+1][out+1],double weights_ih_ii[hid+1][out+1]){
+    
+    
+    double weights_ih[in+1][hid+1];
+    double weights_ho[hid+1][out+1];
+    
+    for(int i=0; i<in+1; i++){
+        for(int j=0; j<hid+1; j++){
+            weights_ih[i][j] = .5*(weights_ih_i[i][j] + weights_ih_ii[i][j]);
+        }
+    }
+    
+    for(int i=0; i<hid+1; i++){
+        for(int j=0; j<out+1; j++){
+            weights_ho[i][j] = .5*(weights_ho_i[i][j] + weights_ho_ii[i][j]);
+        }
+    }
+    
+    save_net(weights_ih,weights_ho, "openmp.bin");
+
+    return 1;
 }
 
 
