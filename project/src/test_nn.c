@@ -123,6 +123,12 @@ int main (int argc, char **argv){
             output_output[i] = sigmoid(output_activation[i]);
         }
         
+        
+        //calc output_ld & system error
+        for(i=1; i<=out; i++){
+            Error += .5 * (target[i]-output_output[i])*(target[i]-output_output[i]);
+        }
+        
         printf("\nOUTPUT over TARGET\n");
         for(int i=0; i<out;i++){
             printf("%f ",output_output[i]);
