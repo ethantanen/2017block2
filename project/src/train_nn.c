@@ -6,24 +6,6 @@
 //
 //
 
-#include "train_nn.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <string.h>
-#include <time.h>
-
-
-#define USE_MNIST_LOADER
-#define MNIST_STATIC
-#define MNIST_DOUBLE
-#include "mnist.h"
-
-
-
-#define in (28*28)
-#define hid 20
-#define out 10
 
 
 int main (int argc, char **argv){
@@ -35,14 +17,12 @@ int main (int argc, char **argv){
     
     //char *file_name = "out.bin";
     
-    const int TRAIN_TOTAL = 3;
-    const int IMAGE_SIZE = (28*28+1);
-    const int TARGET_SIZE = (10+1);
     
     
-    double *_images = malloc(sizeof(double)*60000*IMAGE_SIZE);//(train_total)*(train_image_size)); //60,000 28x28 images w/ a bias node
-    double *_targets = malloc(sizeof(double)*60000*IMAGE_SIZE);//(train_total*train_image_size)); //60,000 labels converted to digit identifiers (0-9) w/ a bias node
-
+    
+    double *_images = malloc(sizeof(double)*60000*IMAGE_SIZE);
+    double *_targets = malloc(sizeof(double)*60000*IMAGE_SIZE);
+    
     get_mnist(_images,_targets);
     
     double **images = malloc(sizeof(double *)*TRAIN_TOTAL);

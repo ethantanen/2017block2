@@ -2,7 +2,7 @@
 //  openmp.h
 //  
 //
-//  Created by Ethan Tanen on 10/14/17.
+//  Created by Ethan Tanen on 10/15/17.
 //
 //
 
