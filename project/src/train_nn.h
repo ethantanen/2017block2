@@ -6,8 +6,8 @@
 //
 //
 
-#ifndef nn_new_h
-#define nn_new_h
+#ifndef train_nn_h
+#define train_nn_h
 
 #include <stdio.h>
 #define MNIST_DOUBLE
@@ -26,4 +26,5 @@ double sig_prime(double activation);
 int get_mnist(double *input,double *target);
 int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char *file_name);
 long get_elapsed_time(struct timespec start_time,struct timespec end_time);
-#endif /* nn_new_h */
+int train_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],double **images, double **targets,int thread_id);
+#endif
