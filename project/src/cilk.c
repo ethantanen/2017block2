@@ -142,9 +142,9 @@ int main (int argc, char **argv){
             for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
                 #pragma simd
-                for(int j=1; j<=in; j++){
-                    hidden_activation[i] += weights_ih[j][i] * input[j];
-                }
+                //for(int j=1; j<=in; j++){
+                hidden_activation[1:hid] += weights_ih[1:hid][i] * input[1:id];
+                //}
                 hidden_output[i] = sigmoid(hidden_activation[i]);
             }
             
