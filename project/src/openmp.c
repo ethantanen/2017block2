@@ -102,7 +102,8 @@ int main (int argc, char **argv){
         }
     }
     
-    
+     
+    combine_weights(weights_ih_i,weights_ih_ii,weights_ho_i,weights_ho_ii);   
     return 1;
 }
 
@@ -315,7 +316,7 @@ long get_elapsed_time(struct timespec start_time,struct timespec end_time){
 }
 
 
-int combine_weights(double weights_ih_i[in+1][hid+1],double weights_ih_ii[in+1][hid+1], double weights_ho_i[hid+1][out+1],double weights_ih_ii[hid+1][out+1]){
+int combine_weights(double weights_ih_i[in+1][hid+1],double weights_ih_ii[in+1][hid+1], double weights_ho_i[hid+1][out+1],double weights_ho_ii[hid+1][out+1]){
     
     
     double weights_ih[in+1][hid+1];
