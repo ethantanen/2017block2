@@ -102,7 +102,7 @@ int main (int argc, char **argv){
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     
     
-    for(int epoch = 0; epoch <1000000; epoch++){
+    for(int epoch = 0; epoch <20000; epoch++){
         /***********
          Forward Propagate
          ***********/
