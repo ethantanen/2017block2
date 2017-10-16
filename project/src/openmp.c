@@ -314,7 +314,7 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
 
 long get_elapsed_time(struct timespec start_time,struct timespec end_time){
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;
-    printf("Total time to train: %ld ms...",msec);
+    printf("Total time to train: %ld ms...\n",msec);
     return msec;
 }
 
