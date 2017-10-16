@@ -96,7 +96,7 @@ int main (int argc, char **argv){
         for(int j=0; j<hid+1; j++){
             
             
-            printf("i: %f    k: %f",weights_ho_i[i][j],weights_ih_ii[i][j]);
+            printf("i: %f    k: %f\n",weights_ho_i[i][j],weights_ih_ii[i][j]);
             
             
         }
@@ -129,12 +129,14 @@ int train_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],dou
     double hidden_ld[hid+1];
     double output_ld[out+1];
 
-    
+    double input[IMAGE_SIZE];
+    double target[TARGET_SIZE];
+  
     for(int epoch = ((thread_id+1)*CHUNK_SIZE)-CHUNK_SIZE; epoch <((thread_id+1)*CHUNK_SIZE); epoch++){
         /***********
          Forward Propagate
          ***********/
-        printf("Epoch: %d, Error: %f\n",epoch,Error);
+       // printf("Epoch: %d, Error: %f\n",epoch,Error);
         Error = 0;
         
         int train_index = 0;
