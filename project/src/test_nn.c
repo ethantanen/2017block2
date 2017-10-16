@@ -89,6 +89,9 @@ int main (int argc, char **argv){
     double hidden_output[hid+1];
     double output_output[out+1];
     
+    double error_x[TRAIN_TOTAL];
+    
+    
 
     
     for(int c=0; c<TRAIN_TOTAL; c++){
@@ -129,6 +132,18 @@ int main (int argc, char **argv){
             Error += .5 * (target[i]-output_output[i])*(target[i]-output_output[i]);
         }
         
+        
+        int count = 1;
+        for(i=1; i<TARGET_SIZE; i++){
+            if(target[i] == 1){
+                break;
+            }
+            count++;
+        }
+        
+        error_x[c] = output_output[count];
+        
+        
         printf("\nOUTPUT over TARGET\n");
         for(int i=0; i<out;i++){
             printf("%f ",output_output[i]);
@@ -140,6 +155,14 @@ int main (int argc, char **argv){
         printf("\n");
     }
     
+    //calculates error for the targets
+    double error_target = 0;
+    for(int i=0; i<TRAIN_TOTAL; i++){
+        
+        error_target+= .5*(error_x-1)(error_x-1);
+        
+    }
+    printf("Error Targ: %f\n",error_target);
     
 }
 
