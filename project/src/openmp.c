@@ -1,3 +1,4 @@
+
 //
 //  openmp.c
 //  
@@ -29,6 +30,10 @@
 
 
 int main (int argc, char **argv){
+    
+    struct timespec start_time;
+    struct timespec end_time;
+
     
     const int TRAIN_TOTAL = 3;
     const int IMAGE_SIZE = (28*28+1);
@@ -79,6 +84,8 @@ int main (int argc, char **argv){
         }
     }
     
+    clock_gettime(CLOCK_MONOTONIC,&start_time);
+
     
     #pragma omp parallel num_threads(2)
     {
@@ -91,16 +98,12 @@ int main (int argc, char **argv){
         }
     }
     
+    clock_gettime(CLOCK_MONOTONIC,&end_time);
     
-    for(int i=0; i<in+1;i++){
-        for(int j=0; j<hid+1; j++){
-            
-            
-            printf("i: %f    k: %f\n",weights_ho_i[i][j],weights_ih_ii[i][j]);
-            
-            
-        }
-    }
+    get_elapsed_time(start_time,end_time);
+
+    
+    
     
      
     combine_weights(weights_ih_i,weights_ih_ii,weights_ho_i,weights_ho_ii);   
