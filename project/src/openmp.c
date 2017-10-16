@@ -58,8 +58,8 @@ int main (int argc, char **argv){
     /**************
      Randomize Weights
      ***************/
-    for(i=0; i<=in; i++){
-        for(j=0; j<=hid; j++){
+    for(int i=0; i<=in; i++){
+        for(int j=0; j<=hid; j++){
             double rand_w = (double)rand()/(double)RAND_MAX;
             if(rand_w>.5)
                 rand_w -= .7;
@@ -69,8 +69,8 @@ int main (int argc, char **argv){
         }
     }
     
-    for(i=0; i<=hid; i++){
-        for(j=0; j<=out; j++){
+    for(int i=0; i<=hid; i++){
+        for(int j=0; j<=out; j++){
             double rand_w = (double)rand()/(double)RAND_MAX;
             if(rand_w>.5)
                 rand_w -= .7;
