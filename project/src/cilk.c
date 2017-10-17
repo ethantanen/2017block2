@@ -25,13 +25,13 @@
 
 
 #define in (28*28)
-#define hid 15
+#define hid 40
 #define out 10
 
 
 int main (int argc, char **argv){
     
-    pthrea
+    
     
     struct timespec start_time;
     struct timespec end_time;
@@ -141,9 +141,9 @@ int main (int argc, char **argv){
             //calc hidden_activaton & hidden_output
             for(i=1; i<=hid; i++){
                 hidden_activation[i] = weights_ih[0][i];
-                #pragma simd
+                
                 //for(int j=1; j<=in; j++){
-                hidden_activation[1:hid] += weights_ih[1:hid][i] * input[1:id];
+                hidden_activation[1:hid] += weights_ih[1:hid][i] * input[1:hid];
                 //}
                 hidden_output[i] = sigmoid(hidden_activation[i]);
             }
@@ -154,10 +154,10 @@ int main (int argc, char **argv){
             //calc output_activatin & output_output
             for(i=1; i<=out; i++){
                 output_activation[i] = weights_ho[0][i];
-                #pragma simd
-                for(int j=1; j<=hid; j++){
-                    output_activation[i] += weights_ho[j][i] * hidden_output[j];
-                }
+              //  #pragma simd
+               // for(int j=1; j<=hid; j++){
+                    output_activation[1:out] += weights_ho[1:out][i] * hidden_output[1:out];
+               // }
                 output_output[i] = sigmoid(output_activation[i]);
             }
             
