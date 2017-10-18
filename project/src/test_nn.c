@@ -138,11 +138,11 @@ int main (int argc, char **argv){
         error_x[c] = output_output[count];
         
         printf("\nOUTPUT over TARGET\n");
-        for(int i=0; i<out;i++){
+        for(int i=0; i<=out;i++){
             printf("%f ",output_output[i]);
         }
         printf("\n");
-        for(int i=0; i<out;i++){
+        for(int i=0; i<=out;i++){
             printf("%f ",target[i]);
         }
         printf("\n");
