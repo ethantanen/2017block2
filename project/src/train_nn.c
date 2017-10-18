@@ -13,32 +13,25 @@
 #include <string.h>
 #include <time.h>
 
-
 #define USE_MNIST_LOADER
 #define MNIST_STATIC
 #define MNIST_DOUBLE
 #include "mnist.h"
 
-
-
 #define in (28*28)
-#define hid 40
+#define hid 5
 #define out 10
-
 
 int main (int argc, char **argv){
     
-    
     struct timespec start_time;
     struct timespec end_time;
-    
     
     char *file_name = "serial.bin";
     
     const int TRAIN_TOTAL = 3;
     const int IMAGE_SIZE = (28*28+1);
     const int TARGET_SIZE = (10+1);
-    
     
     double *_images = malloc(sizeof(double)*60000*IMAGE_SIZE);
     double *_targets = malloc(sizeof(double)*60000*IMAGE_SIZE);

@@ -14,18 +14,15 @@
 #include <string.h>
 #include <time.h>
 #include <cilk/cilk.h>
-#include <pthread.h>
 
-
+//needed to load mnist dataset, results are already normalized 
 #define USE_MNIST_LOADER
 #define MNIST_STATIC
 #define MNIST_DOUBLE
 #include "mnist.h"
 
-
-
 #define in (28*28)
-#define hid 40
+#define hid 5
 #define out 10
 
 
@@ -33,49 +30,55 @@ int main (int argc, char **argv){
     
     
     
+    const int TRAIN_TOTAL = 3; //# of images to train on
+    const int IMAGE_SIZE = (28*28+1);//28*28 picture plus 1 bias node
+    const int TARGET_SIZE = (10+1);//digits 0-9 plus 1 bias node
+    
+    int i=0,j=0,train_index;
+    double Error = 0, error_threshold = 0.001, learning_rate = .1;
+
+    
+    //Timers
     struct timespec start_time;
     struct timespec end_time;
     
-    
+    //binary file to save network weights to
     char *file_name = "cilk.bin";
     
-    const int TRAIN_TOTAL = 3;
-    const int IMAGE_SIZE = (28*28+1);
-    const int TARGET_SIZE = (10+1);
-    
-    
+    //arrays to hold the entire mnist training dataset
     double *_images = malloc(sizeof(double)*60000*IMAGE_SIZE);
     double *_targets = malloc(sizeof(double)*60000*IMAGE_SIZE);
+    
     get_mnist(_images,_targets);
     
+    //arrays to hold ptrs to the start o each image and targt
     double **images = malloc(sizeof(double *)*TRAIN_TOTAL);
     double **targets = malloc(sizeof(double *)*TRAIN_TOTAL);
     
-    for(int i=0; i<TRAIN_TOTAL;i++){
+    for(i=0; i<TRAIN_TOTAL;i++){
         images[i] = &_images[i*IMAGE_SIZE];
         targets[i] = &_targets[i*TARGET_SIZE];
     }
     
     printf("\nMNIST data parsed into image and target arrays...\n");
     
-    
-    int i=0,j=0,train_index;
-    
+    //arrays to hold the training image under consideration and its target
     double input[IMAGE_SIZE];
     double target[TARGET_SIZE];
     
-    double Error = 0, error_threshold = 0.001, learning_rate = .1;
-    
+    //array to house each nodes activation
     double hidden_activation[hid+1];
     double output_activation[out+1];
     
+    //array to house each nodes output
     double hidden_output[hid+1];
     double output_output[out+1];
     
+    //arrays to house the little delta for each node for backpropagation
     double hidden_ld[hid+1];
     double output_ld[out+1];
     
-    
+    //arrays to house the weights that connect the various layers
     double weights_ih[in+1][hid+1];
     double weights_ho[hid+1][out+1];
     
@@ -105,25 +108,26 @@ int main (int argc, char **argv){
     //Begin Timer
     clock_gettime(CLOCK_MONOTONIC,&start_time);
     
-    
+    //trains for 20000 epochs, not nearly enough to have an accurate net
     for(int epoch = 0; epoch <20000; epoch++){
+        
         /***********
          Forward Propagate
          ***********/
         
-        //printf("Epoch: %d, Error: %f\n",epoch,Error);
-        
+        //resets error each epoch
         Error = 0;
         
+        //ensures that images are fed to the network in a random order
         int train_index = 0;
-        
         int rand_index = rand() % TRAIN_TOTAL;
         
+        //loops through each image in the set
         for(int c = 0; c < TRAIN_TOTAL; c++){
             
             int train_index = (c + rand_index) % TRAIN_TOTAL;
-            //printf("Train Index: %d\n",train_index);
             
+            //printf("Train Index: %d\n",train_index);
             
             //create input vector
             for(i=0; i<IMAGE_SIZE;i++){
@@ -140,24 +144,20 @@ int main (int argc, char **argv){
             
             //calc hidden_activaton & hidden_output
             for(i=1; i<=hid; i++){
-                hidden_activation[i] = weights_ih[0][i];
                 
-                //for(int j=1; j<=in; j++){
+                //handels the bias node
+                hidden_activation[i] = weights_ih[0][i];
+                //uses cilks vecotor notations to parallelize the dot prouct
                 hidden_activation[1:hid] += weights_ih[1:hid][i] * input[1:hid];
-                //}
+                //output of the node is the sigmoid of the activation
                 hidden_output[i] = sigmoid(hidden_activation[i]);
             }
             
         
-            
-            
             //calc output_activatin & output_output
             for(i=1; i<=out; i++){
                 output_activation[i] = weights_ho[0][i];
-              //  #pragma simd
-               // for(int j=1; j<=hid; j++){
-                    output_activation[1:out] += weights_ho[1:out][i] * hidden_output[1:out];
-               // }
+                output_activation[1:out] += weights_ho[1:out][i] * hidden_output[1:out];
                 output_output[i] = sigmoid(output_activation[i]);
             }
             
@@ -168,6 +168,7 @@ int main (int argc, char **argv){
             //calc output_ld & system error
             for(i=1; i<=out; i++){
                 output_ld[i] =  sig_prime(output_output[i])*(output_output[i]-target[i]);
+                //calculate syste merror using the function 1/2(target-output)^2
                 Error += .5 * (target[i]-output_output[i])*(target[i]-output_output[i]);
             }
             
@@ -196,22 +197,9 @@ int main (int argc, char **argv){
                     weights_ho[j][i] -= learning_rate * output_ld[i] * hidden_output[j];
                 }
             }
-            
-            /*
-             if(epoch % 1000){
-             printf("\nError: %f, Epoch: %d\n",Error,epoch);
-             
-             
-             for(i=0; i<=out;i++){
-             printf("output: %f, target: %f\n",output_output[i],target[i]);
-             }
-             printf("\n\n");
-             }
-             */
         }
         
-        
-        
+        //stop the timer, save the net if the error dips beneath the threshold
         if(Error < error_threshold ){
             printf("Network Trained, Error: %f, Epoch: %d\n",Error,epoch);
             clock_gettime(CLOCK_MONOTONIC,&end_time);
@@ -219,9 +207,9 @@ int main (int argc, char **argv){
             save_net(weights_ih,weights_ho,file_name);
             return 0;
         }
-        
     }
     
+    //stop timer and compute elapsed time and save net
     clock_gettime(CLOCK_MONOTONIC,&end_time);
     get_elapsed_time(start_time,end_time);
     printf("Error did not reach threshold before the last epoch\n");
@@ -243,6 +231,9 @@ double sig_prime(double activation){
 }
 
 
+/*
+ retrieves the mnsit dataset by using an mnist retrieval library written by Nuri Park
+ */
 int get_mnist(double *input,double *target){
     mnist_data *data;
     int input_index = 0;
@@ -288,7 +279,7 @@ int get_mnist(double *input,double *target){
 }
 
 
-
+//saves the net to the file specified on the top of the program
 int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char *file_name){
     
     
@@ -300,8 +291,6 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
         printf("file failed to open. unfortunetly the network data is lost...");
         return 0;
     }
-    
-    
     
     int net_dim[3] = {in,hid,out};
     
@@ -317,6 +306,7 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
     
     
 }
+
 
 long get_elapsed_time(struct timespec start_time,struct timespec end_time){
     long msec = (end_time.tv_sec - start_time.tv_sec)*1000 + (end_time.tv_nsec - start_time.tv_nsec)/1000000;

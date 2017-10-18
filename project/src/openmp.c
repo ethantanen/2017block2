@@ -22,12 +22,9 @@
 #define MNIST_DOUBLE
 #include "mnist.h"
 
-
 #define in (28*28)
-#define hid 40
+#define hid 5
 #define out 10
-
-
 
 int main (int argc, char **argv){
     
@@ -86,7 +83,9 @@ int main (int argc, char **argv){
     
     clock_gettime(CLOCK_MONOTONIC,&start_time);
 
-    
+    /*
+     Splits the number of epochs between two threads
+     */
     #pragma omp parallel num_threads(2)
     {
         int thread_id = omp_get_thread_num();
@@ -98,26 +97,28 @@ int main (int argc, char **argv){
         }
     }
     
-    clock_gettime(CLOCK_MONOTONIC,&end_time);
     
+    clock_gettime(CLOCK_MONOTONIC,&end_time);
     get_elapsed_time(start_time,end_time);
 
-    
-    
-    
-     
+    /*
+     TODO:vi realize this line should be place above the stop timer call but the analysis was completed as such so i thought i would leave it and fix it later
+     */
     combine_weights(weights_ih_i,weights_ih_ii,weights_ho_i,weights_ho_ii);   
     return 1;
 }
 
 
-
+/*
+ trains the net on the same images but saves weights to the arrays passed into the net
+ */
 int train_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],double **images, double **targets,int thread_id){
     
     
     const int TRAIN_TOTAL = 3;
     const int IMAGE_SIZE = (28*28+1);
     const int TARGET_SIZE = (10+1);
+    //chunk size is 1/2 the total number of epochs, should be ajusted accordingly
     const int CHUNK_SIZE = 10000;
     
     int i=0,j=0,train_index;
@@ -285,7 +286,6 @@ int get_mnist(double *input,double *target){
 
 int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char *file_name){
     
-    
     printf("Network being saved to %s...\n",file_name);
     
     FILE *f=fopen(file_name,"wb");
@@ -294,8 +294,6 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
         printf("file failed to open. unfortunetly the network data is lost...");
         return 0;
     }
-    
-    
     
     int net_dim[3] = {in,hid,out};
     
@@ -308,8 +306,6 @@ int save_net(double weights_ih[in+1][hid+1],double weights_ho[hid+1][out+1],char
     printf("%d of the %d wegihts in weights_ho were saved\n",c,(hid+1)*(out+1));
     
     return 1;
-    
-    
 }
 
 long get_elapsed_time(struct timespec start_time,struct timespec end_time){
@@ -320,7 +316,6 @@ long get_elapsed_time(struct timespec start_time,struct timespec end_time){
 
 
 int combine_weights(double weights_ih_i[in+1][hid+1],double weights_ih_ii[in+1][hid+1], double weights_ho_i[hid+1][out+1],double weights_ho_ii[hid+1][out+1]){
-    
     
     double weights_ih[in+1][hid+1];
     double weights_ho[hid+1][out+1];

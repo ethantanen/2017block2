@@ -36,7 +36,7 @@ int main (int argc, char **argv){
     int node_count_info[3];
     fread(node_count_info,sizeof(int),3,f);
     
-    
+    //store information on constructing the net
     in = node_count_info[0];
     hid = node_count_info[1];
     out = node_count_info[2];
@@ -46,7 +46,6 @@ int main (int argc, char **argv){
     
     //create arrays to hold the nn weights
     printf("\nReading weights from %s...\n",argv[1]);
-    
     double weights_ih[in+1][hid+1];
     double weights_ho[hid+1][out+1];
     
@@ -56,7 +55,7 @@ int main (int argc, char **argv){
     printf("%zu elements read of %d elements in weights_ih\n",c,(in+1)*(hid+1));
     printf("%zu elements read of %d elements in weights_ho\n\n",d,(hid+1)*(out+1));
 
-    
+    //train total is how many images the net should be trained on
     const int TRAIN_TOTAL = 10;
     const int IMAGE_SIZE = (28*28+1);
     const int TARGET_SIZE = (10+1);
@@ -64,6 +63,7 @@ int main (int argc, char **argv){
     double *_images = malloc(sizeof(double)*10000*IMAGE_SIZE);
     double *_targets = malloc(sizeof(double)*10000*TARGET_SIZE);
     
+    //retrieves the entrie mnist testing set
     get_mnist(_images,_targets);
     
     double **images = malloc(sizeof(double *)*TRAIN_TOTAL);
@@ -89,10 +89,9 @@ int main (int argc, char **argv){
     double hidden_output[hid+1];
     double output_output[out+1];
     
+    //array to hold the output of the net only for nodes that correspond to the expected target
     double error_x[TRAIN_TOTAL];
     
-    
-
     
     for(int c=0; c<TRAIN_TOTAL; c++){
         //create input vector
@@ -105,7 +104,6 @@ int main (int argc, char **argv){
             target[i] = *(targets[c]+i);
         }
         
-        
         //calc hidden_activaton & hidden_output
         for(i=1; i<=hid; i++){
             hidden_activation[i] = weights_ih[0][i];
@@ -114,8 +112,6 @@ int main (int argc, char **argv){
             }
             hidden_output[i] = sigmoid(hidden_activation[i]);
         }
-        
-        
         
         //calc output_activatin & output_output
         for(i=1; i<=out; i++){
@@ -126,12 +122,10 @@ int main (int argc, char **argv){
             output_output[i] = sigmoid(output_activation[i]);
         }
         
-        
         //calc output_ld & system error
         for(i=1; i<=out; i++){
             Error += .5 * (target[i]-output_output[i])*(target[i]-output_output[i]);
         }
-        
         
         int count = 1;
         for(i=1; i<TARGET_SIZE; i++){
@@ -142,7 +136,6 @@ int main (int argc, char **argv){
         }
         
         error_x[c] = output_output[count];
-        
         
         printf("\nOUTPUT over TARGET\n");
         for(int i=0; i<out;i++){
@@ -163,7 +156,6 @@ int main (int argc, char **argv){
         
     }
     printf("Error: %f  Error Targ: %f\n",Error,error_target);
-    
 }
 
 
@@ -178,9 +170,6 @@ double sigmoid(double activation){
 double sig_prime(double activation){
     return activation*(1-activation);
 }
-
-
-
 
 int get_mnist(double *input,double *target){
     mnist_data *data;
